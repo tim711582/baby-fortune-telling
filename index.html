@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>寶寶扶養指南 - 八字分析</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <h1><i class="fas fa-baby"></i> 寶寶扶養指南</h1>
+            <p>基於八字分析的0-10歲寶寶成長指導</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="input-section">
+            <h2>輸入寶寶出生資訊</h2>
+            <form id="birthForm">
+                <div class="form-group">
+                    <label for="birthYear">出生年份</label>
+                    <select id="birthYear" required></select>
+                </div>
+                <div class="form-group">
+                    <label for="birthMonth">出生月份</label>
+                    <select id="birthMonth" required></select>
+                </div>
+                <div class="form-group">
+                    <label for="birthDay">出生日期</label>
+                    <select id="birthDay" required></select>
+                </div>
+                <div class="form-group">
+                    <label for="birthHour">出生時辰</label>
+                    <select id="birthHour" required></select>
+                </div>
+                <div class="form-group">
+                    <label for="gender">性別</label>
+                    <select id="gender" required>
+                        <option value="male">男</option>
+                        <option value="female">女</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-primary">開始分析</button>
+            </form>
+        </section>
+
+        <section id="results" class="results-section hidden">
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="overview">八字總覽</button>
+                <button class="tab-btn" data-tab="personality">性格分析</button>
+                <button class="tab-btn" data-tab="monthly">月份指南</button>
+                <button class="tab-btn" data-tab="chart">成長圖表</button>
+            </div>
+
+            <div id="overview" class="tab-content active">
+                <h2>八字總覽</h2>
+                
+                <!-- 傳統八字排盤 -->
+                <div class="traditional-bazi-chart">
+                    <!-- 頂部信息 -->
+                    <div class="chart-header">
+                        <div class="destiny-info">
+                            <div class="main-destiny">
+                                本命：<span id="mainDestiny" class="destiny-text"></span>
+                            </div>
+                            <div class="fortune-index">
+                                好運指數：<span id="fortuneIndex" class="fortune-number"></span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 3x3九宮格排盤 -->
+                    <div class="bazi-grid-3x3">
+                        <!-- 第一行 -->
+                        <div class="palace palace-si" id="palace-si">
+                            <div class="palace-name">巳宮【交友宮】</div>
+                            <div class="palace-info">
+                                <div class="palace-numbers">大限:76-85</div>
+                                <div class="palace-numbers">小限:11 23 35 47 59 71 83</div>
+                                <div class="palace-stars">紫微旺,七殺平,火星,鳳閣,天才,天哭,天馬,絕,伏兵</div>
+                            </div>
+                        </div>
+                        <div class="palace palace-wu" id="palace-wu">
+                            <div class="palace-name">午宮【遷移宮】</div>
+                            <div class="palace-info">
+                                <div class="palace-numbers">大限:66-75</div>
+                                <div class="palace-numbers">小限:12 24 36 48 60 72 84</div>
+                                <div class="palace-stars">文昌,截路,天空,高池,喜,天哭</div>
+                            </div>
+                        </div>
+                        <div class="palace palace-wei" id="palace-wei">
+                            <div class="palace-name">未宮【疾厄宮】</div>
+                            <div class="palace-info">
+                                <div class="palace-numbers">大限:56-65</div>
+                                <div class="palace-numbers">小限:1 13 25 37 49 61 73</div>
+                                <div class="palace-stars">空亡,華蓋,天使,死,病符</div>
+                            </div>
+                        </div>
+                        
+                        <!-- 第二行 -->
+                        <div class="palace palace-chen" id="palace-chen">
+                            <div class="palace-name">辰宮【事業宮-身宮】</div>
+                            <div class="palace-info">
+                                <div class="palace-numbers">大限:86-95</div>
+                                <div class="palace-numbers">小限:10 22 34 46 58 70 82</div>
+                                <div class="palace-stars">天魁旺,天梁旺,左輔,右弼,天才,天喜,天馬,青龍,感情,官府</div>
+                            </div>
+                        </div>
+                        <div class="palace center-info" id="center">
+                            <div class="birth-info">
+                                <div class="solar-date">陽曆：<span id="solarDate">2025年2月7日3時</span></div>
+                                <div class="lunar-date">農曆：<span id="lunarDate">2025年1月10日寅時</span></div>
+                                <div class="ganzhi-date">干支：<span id="ganzhiDate">乙巳年戊寅月丁未日壬寅時</span></div>
+                                <div class="wuxing-info">五行局：<span id="wuxingJu">露震火六局</span></div>
+                                <div class="sihua-info">生年四化：<span id="sihua">天梁化權,紫微化科,天機化祿,太陰化忌</span></div>
+                                <div class="ming-info">命主：<span id="mingzhu">貪狼,身主:天機</span></div>
+                            </div>
+                        </div>
+                        <div class="palace palace-shen" id="palace-shen">
+                            <div class="palace-name">申宮【財帛宮】</div>
+                            <div class="palace-info">
+                                <div class="palace-numbers">大限:46-55</div>
+                                <div class="palace-numbers">小限:2 14 26 38 50 62 74</div>
+                                <div class="palace-stars">文昌,天魁,天輔,孤辰,月馬,解神,台輔,病,喜神</div>
+                            </div>
+                        </div>
+                        
+                        <!-- 第三行 -->
+                        <div class="palace palace-hai" id="palace-hai">
+                            <div class="palace-name">亥宮【大限宮】</div>
+                            <div class="palace-info">
+                                <div class="palace-numbers">大限:26-35</div>
+                                <div class="palace-numbers">小限:4 16 28 40 52 64 76</div>
+                                <div class="palace-stars">紫微旺,破軍旺,左輔,右弼,天魁,天鉞,文昌,文曲</div>
+                            </div>
+                        </div>
+                        <div class="palace palace-xu" id="palace-xu">
+                            <div class="palace-name">戌宮【疾厄宮】</div>
+                            <div class="palace-info">
+                                <div class="palace-numbers">大限:36-45</div>
+                                <div class="palace-numbers">小限:3 15 27 39 51 63 75</div>
+                                <div class="palace-stars">廉貞平,破軍陷,地劫,龍德,破碎,天刑,太刑,飛廉</div>
+                            </div>
+                        </div>
+                        <div class="palace palace-mao" id="palace-mao">
+                            <div class="palace-name">卯宮【田宅宮】</div>
+                            <div class="palace-info">
+                                <div class="palace-numbers">大限:96-105</div>
+                                <div class="palace-numbers">小限:9 21 33 45 57 69 81</div>
+                                <div class="palace-stars">天相陷,祿存,旬空,喜神,博士</div>
+                            </div>
+                        </div>
+                        <div class="palace palace-yin" id="palace-yin">
+                            <div class="palace-name">寅宮【父母宮】</div>
+                            <div class="palace-info">
+                                <div class="palace-numbers">大限:106-115</div>
+                                <div class="palace-numbers">小限:8 20 32 44 56 68 80</div>
+                                <div class="palace-stars">武曲陷,貪狼陷,地劫,陰煞,天哭,天虛,三台,八座,沐浴,青龍</div>
+                            </div>
+                        </div>
+                        <div class="palace palace-chou" id="palace-chou">
+                            <div class="palace-name">丑宮【命宮】</div>
+                            <div class="palace-info">
+                                <div class="palace-numbers">大限:6-15</div>
+                                <div class="palace-numbers">小限:6 18 30 42 54 66 78</div>
+                                <div class="palace-stars">太陽旺,太陰旺,巨門旺,小耗</div>
+                            </div>
+                        </div>
+                        <div class="palace palace-zi" id="palace-zi">
+                            <div class="palace-name">子宮【兄弟宮】</div>
+                            <div class="palace-info">
+                                <div class="palace-numbers">大限:16-25</div>
+                                <div class="palace-numbers">小限:5 17 29 41 53 65 77</div>
+                                <div class="palace-stars">天府旺,天馬,天虛,龍德,暗祿</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 底部星盤度數與吉凶分析 -->
+                    <div class="chart-footer">
+                        <div class="degree-analysis">
+                            <h4>十二星宮度數與吉凶分析</h4>
+                            <div id="degreeAnalysis" class="degree-content"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bazi-grid">
+                    <div class="bazi-cell">
+                        <h3>年柱</h3>
+                        <div id="yearPillar" class="pillar"></div>
+                    </div>
+                    <div class="bazi-cell">
+                        <h3>月柱</h3>
+                        <div id="monthPillar" class="pillar"></div>
+                    </div>
+                    <div class="bazi-cell">
+                        <h3>日柱</h3>
+                        <div id="dayPillar" class="pillar"></div>
+                    </div>
+                    <div class="bazi-cell">
+                        <h3>時柱</h3>
+                        <div id="hourPillar" class="pillar"></div>
+                    </div>
+                </div>
+                <div class="five-elements">
+                    <h3>五行分布</h3>
+                    <div class="chart-container">
+                        <canvas id="elementsChart"></canvas>
+                    </div>
+                </div>
+                <div class="overall-analysis">
+                    <h3>整體分析</h3>
+                    <div id="overallAnalysis" class="analysis-text"></div>
+                </div>
+            </div>
+
+            <div id="personality" class="tab-content">
+                <h2>性格分析與扶養指南</h2>
+                
+                <!-- 基本性格特質 -->
+                <div class="personality-section">
+                    <h3><i class="fas fa-user-circle"></i> 基本性格特質</h3>
+                    <div class="personality-traits">
+                        <div id="mainTraits" class="traits-container"></div>
+                    </div>
+                    <div class="personality-details">
+                        <div id="personalityDetails" class="analysis-text"></div>
+                    </div>
+                </div>
+
+                <!-- 年齡階段性格變化 -->
+                <div class="personality-section">
+                    <h3><i class="fas fa-chart-line"></i> 年齡階段性格變化</h3>
+                    <div class="age-stages">
+                        <div class="stage-card" data-age="0-2">
+                            <h4>0-2歲 嬰幼兒期</h4>
+                            <div class="stage-content">
+                                <div class="personality-traits-stage">
+                                    <h5>性格特點：</h5>
+                                    <ul id="traits-0-2">
+                                        <li>天生氣質較為敏感，對環境變化反應明顯</li>
+                                        <li>情緒表達直接，哭鬧時需要耐心安撫</li>
+                                        <li>對聲音和光線較為敏感，需要溫和的環境</li>
+                                        <li>依賴性強，需要充分的安全感</li>
+                                    </ul>
+                                </div>
+                                <div class="parenting-tips">
+                                    <h5>扶養注意事項：</h5>
+                                    <ul>
+                                        <li>建立規律的作息時間，提供穩定的環境</li>
+                                        <li>多給予肌膚接觸和溫柔的聲音安撫</li>
+                                        <li>避免過度刺激，保持環境的安靜舒適</li>
+                                        <li>及時回應寶寶的需求，建立信任感</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="stage-card" data-age="3-5">
+                            <h4>3-5歲 學前期</h4>
+                            <div class="stage-content">
+                                <div class="personality-traits-stage">
+                                    <h5>性格特點：</h5>
+                                    <ul id="traits-3-5">
+                                        <li>好奇心旺盛，喜歡探索和提問</li>
+                                        <li>想像力豐富，創造力開始顯現</li>
+                                        <li>情緒波動較大，需要學習情緒管理</li>
+                                        <li>開始展現獨立性，但仍需要指導</li>
+                                    </ul>
+                                </div>
+                                <div class="parenting-tips">
+                                    <h5>扶養注意事項：</h5>
+                                    <ul>
+                                        <li>鼓勵探索但設定安全界限</li>
+                                        <li>培養基本的生活自理能力</li>
+                                        <li>教導情緒表達的適當方式</li>
+                                        <li>提供豐富的學習和遊戲機會</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="stage-card" data-age="6-8">
+                            <h4>6-8歲 學齡初期</h4>
+                            <div class="stage-content">
+                                <div class="personality-traits-stage">
+                                    <h5>性格特點：</h5>
+                                    <ul id="traits-6-8">
+                                        <li>學習能力強，對知識有渴望</li>
+                                        <li>社交能力發展，開始建立友誼</li>
+                                        <li>責任感逐漸形成，能承擔簡單任務</li>
+                                        <li>自我意識增強，開始有自己的想法</li>
+                                    </ul>
+                                </div>
+                                <div class="parenting-tips">
+                                    <h5>扶養注意事項：</h5>
+                                    <ul>
+                                        <li>建立良好的學習習慣和環境</li>
+                                        <li>培養社交技能和團隊合作精神</li>
+                                        <li>給予適當的責任和自主權</li>
+                                        <li>鼓勵表達想法，培養批判思維</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="stage-card" data-age="9-10">
+                            <h4>9-10歲 學齡中期</h4>
+                            <div class="stage-content">
+                                <div class="personality-traits-stage">
+                                    <h5>性格特點：</h5>
+                                    <ul id="traits-9-10">
+                                        <li>邏輯思維能力增強，能理解複雜概念</li>
+                                        <li>價值觀開始形成，對公平正義有概念</li>
+                                        <li>同儕關係重要性增加</li>
+                                        <li>開始關注自己的能力和表現</li>
+                                    </ul>
+                                </div>
+                                <div class="parenting-tips">
+                                    <h5>扶養注意事項：</h5>
+                                    <ul>
+                                        <li>引導建立正確的價值觀和道德觀</li>
+                                        <li>培養解決問題的能力</li>
+                                        <li>支持健康的同儕交往</li>
+                                        <li>鼓勵發展個人興趣和專長</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 教育建議 -->
+                <div class="personality-section">
+                    <h3><i class="fas fa-graduation-cap"></i> 教育建議</h3>
+                    <div class="education-tips">
+                        <div class="tip-category">
+                            <h4>學習方式</h4>
+                            <div id="learningStyle" class="tip-content">
+                                <p>根據八字分析，建議採用以下學習方式：</p>
+                                <ul>
+                                    <li>視覺學習：使用圖表、圖片和色彩豐富的教材</li>
+                                    <li>體驗學習：通過實際操作和體驗來學習</li>
+                                    <li>循序漸進：按部就班，不急於求成</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="tip-category">
+                            <h4>溝通方式</h4>
+                            <div id="communicationStyle" class="tip-content">
+                                <p>與孩子溝通時建議：</p>
+                                <ul>
+                                    <li>耐心傾聽，給予充分的表達機會</li>
+                                    <li>使用正面的語言和鼓勵</li>
+                                    <li>設定清晰的界限和期望</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="tip-category">
+                            <h4>興趣培養</h4>
+                            <div id="interestDevelopment" class="tip-content">
+                                <p>建議培養的興趣方向：</p>
+                                <ul>
+                                    <li>藝術創作：繪畫、音樂、手工等</li>
+                                    <li>運動活動：游泳、跑步、球類運動</li>
+                                    <li>閱讀寫作：培養語言表達能力</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 健康管理 -->
+                <div class="personality-section">
+                    <h3><i class="fas fa-heart"></i> 健康管理建議</h3>
+                    <div class="health-tips">
+                        <div class="health-category">
+                            <h4>體質特點</h4>
+                            <div id="physicalConstitution" class="health-content">
+                                <p>根據八字分析的體質特點和注意事項</p>
+                            </div>
+                        </div>
+                        <div class="health-category">
+                            <h4>飲食建議</h4>
+                            <div id="dietaryAdvice" class="health-content">
+                                <p>適合的飲食類型和需要避免的食物</p>
+                            </div>
+                        </div>
+                        <div class="health-category">
+                            <h4>運動建議</h4>
+                            <div id="exerciseAdvice" class="health-content">
+                                <p>適合的運動類型和運動強度</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="monthly" class="tab-content">
+                <h2>月份指南</h2>
+                <div class="age-selector">
+                    <label for="ageSelect">選擇年齡:</label>
+                    <select id="ageSelect"></select>
+                </div>
+                <div class="months-grid" id="monthsGrid">
+                    <!-- 月份指南將在這裡動態生成 -->
+                </div>
+            </div>
+
+            <div id="chart" class="tab-content">
+                <h2>成長圖表</h2>
+                <div class="chart-options">
+                    <label for="chartType">圖表類型:</label>
+                    <select id="chartType">
+                        <option value="elements">五行變化</option>
+                        <option value="stars">星耀強度</option>
+                        <option value="phases">成長階段</option>
+                    </select>
+                </div>
+                <div class="chart-container">
+                    <canvas id="growthChart"></canvas>
+                </div>
+                <div id="chartAnalysis" class="analysis-text"></div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2023 寶寶扶養指南 - 基於八字分析的育兒指導平台</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
+    <script src="js/bazi-calculator.js"></script>
+    <script src="js/analysis.js"></script>
+    <script src="js/charts.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

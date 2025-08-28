@@ -1,0 +1,942 @@
+/* 全局樣式 */
+:root {
+    --primary-color: #ff6b6b;
+    --secondary-color: #4ecdc4;
+    --accent-color: #ffe66d;
+    --dark-color: #2d3436;
+    --light-color: #f7f7f7;
+    --success-color: #6ab04c;
+    --warning-color: #f0932b;
+    --danger-color: #eb4d4b;
+    --wood-color: #d4a373;
+    --fire-color: #e76f51;
+    --earth-color: #774936;
+    --metal-color: #adb5bd;
+    --water-color: #48cae4;
+    --border-radius: 8px;
+    --box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    --transition: all 0.3s ease;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Microsoft JhengHei', 'PingFang TC', 'Heiti TC', 'Apple LiGothic', sans-serif;
+    line-height: 1.6;
+    color: var(--dark-color);
+    background-color: #f9f9f9;
+    background-image: url('data:image/svg+xml;utf8,<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z" fill="%23f0f0f0" fill-opacity="0.4" fill-rule="evenodd"/></svg>');
+}
+
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+/* 頭部樣式 */
+.header {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    padding: 2rem 0;
+    text-align: center;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+    border-bottom-left-radius: 30% 5%;
+    border-bottom-right-radius: 30% 5%;
+}
+
+.header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.header p {
+    font-size: 1.2rem;
+    opacity: 0.9;
+}
+
+/* 表單樣式 */
+.input-section {
+    background-color: white;
+    padding: 2rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    margin-bottom: 2rem;
+    transition: var(--transition);
+}
+
+.input-section h2 {
+    color: var(--primary-color);
+    margin-bottom: 1.5rem;
+    text-align: center;
+    font-size: 1.8rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+    color: var(--dark-color);
+}
+
+select, input {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid #ddd;
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    transition: var(--transition);
+}
+
+select:focus, input:focus {
+    outline: none;
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 0 2px rgba(78, 205, 196, 0.2);
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    font-size: 1rem;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: var(--transition);
+    display: block;
+    width: 100%;
+    text-align: center;
+    font-weight: bold;
+    margin-top: 1rem;
+}
+
+.btn-primary:hover {
+    background-color: #ff5252;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* 結果區域樣式 */
+.results-section {
+    background-color: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    padding: 0;
+    margin-bottom: 2rem;
+    overflow: hidden;
+}
+
+.hidden {
+    display: none;
+}
+
+/* 標籤頁樣式 */
+.tabs {
+    display: flex;
+    background-color: #f1f1f1;
+    overflow-x: auto;
+    border-bottom: 1px solid #ddd;
+}
+
+.tab-btn {
+    background-color: inherit;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 1rem 1.5rem;
+    font-size: 1rem;
+    font-weight: bold;
+    transition: var(--transition);
+    white-space: nowrap;
+}
+
+.tab-btn:hover {
+    background-color: #ddd;
+}
+
+.tab-btn.active {
+    background-color: white;
+    border-bottom: 3px solid var(--primary-color);
+    color: var(--primary-color);
+}
+
+.tab-content {
+    display: none;
+    padding: 2rem;
+}
+
+.tab-content.active {
+    display: block;
+    animation: fadeIn 0.5s;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* 八字排盤表格樣式 */
+.bazi-chart {
+    margin-bottom: 2rem;
+    background-color: white;
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+    box-shadow: var(--box-shadow);
+}
+
+.bazi-chart h3 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: var(--primary-color);
+    font-size: 1.3rem;
+}
+
+.bazi-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1.5rem;
+    font-size: 1.1rem;
+}
+
+.bazi-table th {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 1rem;
+    text-align: center;
+    font-weight: bold;
+    border: 2px solid var(--primary-color);
+}
+
+.bazi-table td {
+    padding: 1.2rem;
+    text-align: center;
+    border: 2px solid #ddd;
+    font-weight: bold;
+    font-size: 1.3rem;
+    min-height: 60px;
+    vertical-align: middle;
+}
+
+.bazi-table .stem {
+    background-color: #f8f9fa;
+    color: var(--primary-color);
+}
+
+.bazi-table .branch {
+    background-color: #e9ecef;
+    color: var(--secondary-color);
+}
+
+.bazi-elements {
+    background-color: #f9f9f9;
+    border-radius: var(--border-radius);
+    padding: 1rem;
+}
+
+.element-row, .nayin-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.8rem;
+    font-size: 0.95rem;
+}
+
+.element-row:last-child, .nayin-row:last-child {
+    margin-bottom: 0;
+}
+
+.element-row .label, .nayin-row .label {
+    font-weight: bold;
+    min-width: 60px;
+    color: var(--dark-color);
+}
+
+.element-row .element, .nayin-row .nayin {
+    flex: 1;
+    text-align: center;
+    padding: 0.3rem 0.5rem;
+    margin: 0 0.2rem;
+    border-radius: 4px;
+    font-weight: bold;
+}
+
+.element-row .element {
+    background-color: rgba(var(--primary-color-rgb), 0.1);
+    color: var(--primary-color);
+}
+
+.nayin-row .nayin {
+    background-color: rgba(var(--secondary-color-rgb), 0.1);
+    color: var(--secondary-color);
+    font-size: 0.85rem;
+}
+
+/* 傳統八字排盤樣式 */
+.traditional-bazi-chart {
+    margin-bottom: 2rem;
+    background-color: #fff;
+    border: 2px solid #333;
+    border-radius: 8px;
+    padding: 1rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* 頂部信息樣式 */
+.chart-header {
+    text-align: center;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background-color: #f8f9fa;
+    border-radius: 6px;
+}
+
+.destiny-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 0 20px;
+}
+
+.fortune-index {
+    font-weight: bold;
+    font-size: 16px;
+    color: #8B4513;
+}
+
+.fortune-number {
+    color: #FF6B35;
+    font-size: 18px;
+}
+
+.main-destiny, .fortune-index {
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.destiny-text {
+    color: var(--primary-color);
+    font-size: 1.4rem;
+}
+
+.fortune-number {
+    color: #e74c3c;
+    font-size: 1.6rem;
+    font-weight: bold;
+}
+
+/* 九宮格排盤樣式 - 重新設計 */
+.bazi-grid-3x3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 3px;
+    width: 700px;
+    height: 700px;
+    margin: 0 auto;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    border: 3px solid #2c3e50;
+    border-radius: 12px;
+    padding: 8px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.palace {
+    background: rgba(255, 255, 255, 0.95);
+    border: 2px solid #34495e;
+    border-radius: 8px;
+    padding: 10px;
+    height: 200px;
+    font-size: 11px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+    line-height: 1.3;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(5px);
+}
+
+.palace:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    border-color: #3498db;
+}
+
+/* 宮位顏色區分 - 現代化配色 */
+.palace-si { 
+    background: linear-gradient(135deg, #e8f5e8 0%, #d4edda 100%); 
+    border-left: 4px solid #28a745;
+} /* 交友宮 - 綠色系 */
+
+.palace-wu { 
+    background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%); 
+    border-left: 4px solid #ffc107;
+} /* 遷移宮 - 黃色系 */
+
+.palace-wei { 
+    background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%); 
+    border-left: 4px solid #dc3545;
+} /* 疾厄宮 - 紅色系 */
+
+.palace-shen { 
+    background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%); 
+    border-left: 4px solid #17a2b8;
+} /* 財帛宮 - 青色系 */
+
+.palace-hai { 
+    background: linear-gradient(135deg, #e2e3e5 0%, #d6d8db 100%); 
+    border-left: 4px solid #6c757d;
+} /* 大限宮 - 灰色系 */
+
+.palace-xu { 
+    background: linear-gradient(135deg, #fce4ec 0%, #f8bbd9 100%); 
+    border-left: 4px solid #e91e63;
+} /* 戌宮 - 粉色系 */
+
+.palace-mao { 
+    background: linear-gradient(135deg, #e1f5fe 0%, #b3e5fc 100%); 
+    border-left: 4px solid #03a9f4;
+} /* 田宅宮 - 藍色系 */
+
+.palace-yin { 
+    background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%); 
+    border-left: 4px solid #9c27b0;
+} /* 父母宮 - 紫色系 */
+
+.palace-chou { 
+    background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%); 
+    border-left: 4px solid #ff9800;
+} /* 命宮 - 橙色系 */
+
+.palace-zi { 
+    background: linear-gradient(135deg, #e8eaf6 0%, #c5cae9 100%); 
+    border-left: 4px solid #3f51b5;
+} /* 兄弟宮 - 靛色系 */
+
+.palace-name {
+    font-weight: bold;
+    font-size: 13px;
+    color: #2c3e50;
+    margin-bottom: 8px;
+    text-align: center;
+    border-bottom: 2px solid #3498db;
+    padding-bottom: 4px;
+    background: linear-gradient(90deg, #3498db, #2980b9);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.palace-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.palace-numbers {
+    font-size: 10px;
+    color: #34495e;
+    margin-bottom: 2px;
+    font-weight: 500;
+    padding: 2px 4px;
+    background: rgba(52, 152, 219, 0.1);
+    border-radius: 4px;
+    border-left: 3px solid #3498db;
+}
+
+.palace-stars {
+    font-size: 10px;
+    color: #2c3e50;
+    line-height: 1.4;
+    word-wrap: break-word;
+    padding: 4px;
+    background: rgba(241, 196, 15, 0.1);
+    border-radius: 4px;
+    border-left: 3px solid #f1c40f;
+    font-weight: 500;
+}
+
+.main-stars {
+    font-weight: bold;
+    color: var(--primary-color);
+    margin-bottom: 0.3rem;
+    line-height: 1.3;
+}
+
+.minor-stars {
+    color: #666;
+    font-size: 0.75rem;
+    margin-bottom: 0.3rem;
+    line-height: 1.2;
+}
+
+.palace-desc {
+    color: #888;
+    font-size: 0.7rem;
+    line-height: 1.1;
+}
+
+/* 中央信息區域 - 重新設計 */
+.center-info {
+    background: linear-gradient(135deg, #fff8dc 0%, #f5f5dc 100%) !important;
+    border: 3px solid #8B4513 !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 12px;
+    box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+.birth-info {
+    font-size: 11px;
+    line-height: 1.5;
+    width: 100%;
+}
+
+.birth-info div {
+    margin-bottom: 4px;
+    padding: 2px 4px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.3);
+    border-left: 3px solid #8B4513;
+}
+
+.birth-info > div {
+    margin-bottom: 6px;
+    color: #2c3e50;
+    font-weight: 500;
+}
+
+.birth-info span {
+    font-weight: bold;
+    color: #8B4513;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* 特殊宮位顏色 */
+#palace1 { background-color: #e8f5e8; } /* 交友宮 */
+#palace2 { background-color: #fff2e8; } /* 遷移宮 */
+#palace3 { background-color: #f0f0f0; } /* 疾厄宮 */
+#palace4 { background-color: #fff8dc; } /* 財帛宮 */
+#palace5 { background-color: #e8f4fd; } /* 事業宮 */
+#palace6 { background-color: #f5f5dc; } /* 子女宮 */
+#palace7 { background-color: #ffe4e1; } /* 夫妻宮 */
+#palace8 { background-color: #f0fff0; } /* 田宅宮 */
+#palace9 { background-color: #f5f5f5; } /* 父母宮 */
+#palace10 { background-color: #fff8dc; } /* 福德宮 */
+#palace11 { background-color: #e6e6fa; } /* 兄弟宮 */
+#palace12 { background-color: #ffffe0; } /* 命宮 */
+
+/* 底部分析樣式 */
+.chart-footer {
+    margin-top: 1rem;
+    padding: 1rem;
+    background-color: #f8f9fa;
+    border-radius: 6px;
+}
+
+.degree-analysis h4 {
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.degree-content {
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: #333;
+}
+
+/* 八字總覽樣式 */
+.bazi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.bazi-cell {
+    background-color: #f9f9f9;
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+    text-align: center;
+    box-shadow: var(--box-shadow);
+    transition: var(--transition);
+}
+
+.bazi-cell:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+}
+
+.bazi-cell h3 {
+    margin-bottom: 1rem;
+    color: var(--dark-color);
+}
+
+.pillar {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+/* 五行分布樣式 */
+.five-elements {
+    margin-bottom: 2rem;
+}
+
+.five-elements h3 {
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.chart-container {
+    height: 300px;
+    margin-bottom: 1.5rem;
+}
+
+/* 分析文字樣式 */
+.analysis-text {
+    background-color: #f9f9f9;
+    border-left: 4px solid var(--secondary-color);
+    padding: 1.5rem;
+    border-radius: 0 var(--border-radius) var(--border-radius) 0;
+    line-height: 1.8;
+}
+
+/* 性格特質樣式 */
+.traits-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.trait-tag {
+    background-color: var(--accent-color);
+    color: var(--dark-color);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: bold;
+    display: inline-block;
+}
+
+/* 月份指南樣式 */
+.age-selector {
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.months-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.month-card {
+    background-color: #f9f9f9;
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+    box-shadow: var(--box-shadow);
+    transition: var(--transition);
+}
+
+.month-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+.month-card h4 {
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 0.5rem;
+}
+
+/* 圖表選項樣式 */
+.chart-options {
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+/* 五行顏色樣式 */
+.wood {
+    color: var(--wood-color);
+}
+
+.fire {
+    color: var(--fire-color);
+}
+
+.earth {
+    color: var(--earth-color);
+}
+
+.metal {
+    color: var(--metal-color);
+}
+
+.water {
+    color: var(--water-color);
+}
+
+/* 性格分析樣式 */
+.personality-section {
+    margin-bottom: 3rem;
+    background-color: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.personality-section h3 {
+    color: var(--primary-color);
+    margin-bottom: 1.5rem;
+    font-size: 1.4rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.personality-section h3 i {
+    font-size: 1.2rem;
+}
+
+.personality-traits {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.trait-card {
+    background-color: white;
+    padding: 1rem;
+    border-radius: 8px;
+    border-left: 4px solid var(--primary-color);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.trait-card h4 {
+    margin: 0 0 0.5rem 0;
+    color: var(--primary-color);
+}
+
+.trait-card p {
+    margin: 0;
+    color: var(--dark-color);
+    font-size: 0.9rem;
+}
+
+/* 年齡階段樣式 */
+.age-stages {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.stage-card {
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    padding: 1.5rem;
+    border: 2px solid #e9ecef;
+    transition: all 0.3s ease;
+}
+
+.stage-card:hover {
+    border-color: var(--primary-color);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.stage-card h4 {
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+    text-align: center;
+    background-color: var(--primary-color);
+    color: white;
+    padding: 0.5rem;
+    border-radius: 6px;
+    margin: -1.5rem -1.5rem 1rem -1.5rem;
+}
+
+.stage-content {
+    display: grid;
+    gap: 1rem;
+}
+
+.personality-traits-stage h5,
+.parenting-tips h5 {
+    color: var(--secondary-color);
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.personality-traits-stage ul,
+.parenting-tips ul {
+    margin: 0;
+    padding-left: 1.2rem;
+}
+
+.personality-traits-stage li,
+.parenting-tips li {
+    margin-bottom: 0.5rem;
+    line-height: 1.5;
+    color: var(--dark-color);
+}
+
+.parenting-tips {
+    background-color: #fff3cd;
+    padding: 1rem;
+    border-radius: 6px;
+    border-left: 4px solid #ffc107;
+}
+
+/* 教育建議樣式 */
+.education-tips {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.tip-category {
+    background-color: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+}
+
+.tip-category h4 {
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+    text-align: center;
+    background-color: var(--primary-color);
+    color: white;
+    padding: 0.5rem;
+    border-radius: 4px;
+    margin: -1.5rem -1.5rem 1rem -1.5rem;
+}
+
+.tip-content p {
+    margin-bottom: 0.8rem;
+    color: var(--dark-color);
+    font-weight: 500;
+}
+
+.tip-content ul {
+    margin: 0;
+    padding-left: 1.2rem;
+}
+
+.tip-content li {
+    margin-bottom: 0.5rem;
+    line-height: 1.5;
+    color: var(--dark-color);
+}
+
+/* 健康管理樣式 */
+.health-tips {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.health-category {
+    background-color: #f0f8ff;
+    padding: 1.5rem;
+    border-radius: 8px;
+    border: 1px solid #b3d9ff;
+}
+
+.health-category h4 {
+    color: #0066cc;
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+    text-align: center;
+    background-color: #0066cc;
+    color: white;
+    padding: 0.5rem;
+    border-radius: 4px;
+    margin: -1.5rem -1.5rem 1rem -1.5rem;
+}
+
+.health-content p {
+    margin: 0;
+    color: var(--dark-color);
+    line-height: 1.6;
+}
+
+.health-content ul {
+    margin: 0.8rem 0 0 0;
+    padding-left: 1.2rem;
+}
+
+.health-content li {
+    margin-bottom: 0.5rem;
+    line-height: 1.5;
+    color: var(--dark-color);
+}
+
+/* 頁腳樣式 */
+.footer {
+    background-color: var(--dark-color);
+    color: white;
+    padding: 2rem 0;
+    text-align: center;
+    margin-top: 3rem;
+}
+
+/* 響應式設計 */
+@media (max-width: 768px) {
+    .header h1 {
+        font-size: 2rem;
+    }
+    
+    .header p {
+        font-size: 1rem;
+    }
+    
+    .bazi-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .months-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .tab-btn {
+        padding: 0.8rem 1rem;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .bazi-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .tab-content {
+        padding: 1.5rem;
+    }
+    
+    .pillar {
+        font-size: 1.5rem;
+    }
+}
