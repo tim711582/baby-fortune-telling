@@ -308,18 +308,7 @@ select:focus, input:focus {
     padding: 0 20px;
 }
 
-.fortune-index {
-    font-weight: bold;
-    font-size: 16px;
-    color: #8B4513;
-}
-
-.fortune-number {
-    color: #FF6B35;
-    font-size: 18px;
-}
-
-.main-destiny, .fortune-index {
+.main-destiny {
     font-size: 1.2rem;
     font-weight: bold;
 }
@@ -327,12 +316,6 @@ select:focus, input:focus {
 .destiny-text {
     color: var(--primary-color);
     font-size: 1.4rem;
-}
-
-.fortune-number {
-    color: #e74c3c;
-    font-size: 1.6rem;
-    font-weight: bold;
 }
 
 /* 九宮格排盤樣式 - 重新設計 */

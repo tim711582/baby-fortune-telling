@@ -176,8 +176,7 @@ function handleFormSubmit(event) {
         window.baziAnalysis.updateEducationAndHealthAdvice(bazi, elementAnalysis);
     }
     
-    // 更新好運指數
-    updateFortuneIndex(bazi, elementAnalysis);
+
     
     // 滾動到結果區域
     document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
@@ -244,42 +243,6 @@ function updateTraditionalBaziChart(bazi, elementAnalysis) {
     
     // 更新底部度數分析
     updateDegreeAnalysis(bazi);
-}
-
-/**
- * 更新好運指數
- * @param {Object} bazi - 八字信息
- * @param {Object} elementAnalysis - 五行分析
- */
-function updateFortuneIndex(bazi, elementAnalysis) {
-    const fortuneIndexElement = document.getElementById('fortuneIndex');
-    if (fortuneIndexElement) {
-        // 計算好運指數（簡化版本）
-        let fortuneScore = 88; // 預設值
-        
-        if (bazi && elementAnalysis) {
-            // 根據八字五行平衡度計算
-            const elements = ['木', '火', '土', '金', '水'];
-            const elementCounts = elementAnalysis.elementStats || {};
-            
-            // 計算五行平衡度
-            const totalCount = Object.values(elementCounts).reduce((sum, count) => sum + count, 0);
-            if (totalCount > 0) {
-                const averageCount = totalCount / 5;
-                let balanceScore = 0;
-                
-                elements.forEach(element => {
-                    const count = elementCounts[element] || 0;
-                    const deviation = Math.abs(count - averageCount);
-                    balanceScore += Math.max(0, 20 - deviation * 5);
-                });
-                
-                fortuneScore = Math.min(99, Math.max(1, Math.round(balanceScore)));
-            }
-        }
-        
-        fortuneIndexElement.textContent = fortuneScore;
-    }
 }
 
 /**
