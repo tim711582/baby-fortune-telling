@@ -350,26 +350,30 @@ function getSihua(yearStem) {
  * @param {Object} elementAnalysis - 五行分析
  */
 function updatePalaceInfo(bazi, elementAnalysis) {
-    const palaceData = {
-        'palace1': { main: '交友', minor: '天相,右弼', desc: '朋友眾多,人緣佳' },
-        'palace2': { main: '遷移', minor: '文昌,文曲', desc: '外出運佳,適合發展' },
-        'palace3': { main: '疾厄', minor: '天刑,天姚', desc: '注意健康,防意外' },
-        'palace4': { main: '財帛', minor: '祿存,化祿', desc: '財運亨通,善理財' },
-        'palace5': { main: '事業', minor: '天府,左輔', desc: '事業有成,領導能力強' },
-        'palace6': { main: '子女', minor: '天同,天梁', desc: '子女聰明,親情和睦' },
-        'palace7': { main: '夫妻', minor: '紫微,天相', desc: '婚姻美滿,配偶賢能' },
-        'palace8': { main: '田宅', minor: '武曲,破軍', desc: '置產能力強,家業興旺' },
-        'palace9': { main: '父母', minor: '太陽,巨門', desc: '父母恩重,家庭和諧' },
-        'palace10': { main: '福德', minor: '太陰,天機', desc: '福氣深厚,精神富足' },
-        'palace11': { main: '兄弟', minor: '貪狼,七殺', desc: '兄弟情深,互相扶持' },
-        'palace12': { main: '命宮', minor: '紫微,天府', desc: '命格高貴,前程似錦' }
+    // 根據八字信息動態更新宮位星曜
+    const palaceMapping = {
+        'palace-si': { name: '巳宮【交友宮】', stars: '天相,右弼,紅鸞' },
+        'palace-wu': { name: '午宮【遷移宮】', stars: '文昌,文曲,天喜' },
+        'palace-wei': { name: '未宮【疾厄宮】', stars: '天刑,天姚,陀羅' },
+        'palace-chen': { name: '辰宮【事業宮-身宮】', stars: '天府,左輔,祿存' },
+        'palace-shen': { name: '申宮【財帛宮】', stars: '祿存,化祿,天馬' },
+        'palace-hai': { name: '亥宮【大限宮】', stars: '紫微,破軍,天魁' },
+        'palace-xu': { name: '戌宮【疾厄宮】', stars: '廉貞,破軍,地劫' },
+        'palace-mao': { name: '卯宮【田宅宮】', stars: '天相,祿存,博士' },
+        'palace-yin': { name: '寅宮【父母宮】', stars: '武曲,貪狼,三台' },
+        'palace-chou': { name: '丑宮【命宮】', stars: '太陽,太陰,巨門' },
+        'palace-zi': { name: '子宮【兄弟宮】', stars: '天府,天馬,龍德' }
     };
     
-    Object.keys(palaceData).forEach(palaceId => {
-        const data = palaceData[palaceId];
-        document.getElementById(`${palaceId}-main`).textContent = data.main;
-        document.getElementById(`${palaceId}-minor`).textContent = data.minor;
-        document.getElementById(`${palaceId}-desc`).textContent = data.desc;
+    // 更新每個宮位的星曜信息
+    Object.keys(palaceMapping).forEach(palaceId => {
+        const palaceElement = document.getElementById(palaceId);
+        if (palaceElement) {
+            const starsElement = palaceElement.querySelector('.palace-stars');
+            if (starsElement) {
+                starsElement.textContent = palaceMapping[palaceId].stars;
+            }
+        }
     });
 }
 
