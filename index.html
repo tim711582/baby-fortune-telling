@@ -12,6 +12,9 @@
         <div class="container">
             <h1><i class="fas fa-baby"></i> 寶寶扶養指南</h1>
             <p>基於八字分析的0-10歲寶寶成長指導</p>
+            <button id="settingsBtn" class="settings-btn" title="設定">
+                <i class="fas fa-cog"></i>
+            </button>
         </div>
     </header>
 
@@ -428,6 +431,42 @@
         </section>
     </main>
 
+    <!-- 設定模態框 -->
+    <div id="settingsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-cog"></i> 設定</h3>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="setting-group">
+                    <label for="apiKeyInput">OpenAI API 金鑰</label>
+                    <div class="api-key-container">
+                        <input type="password" id="apiKeyInput" placeholder="請輸入您的 OpenAI API 金鑰">
+                        <button type="button" id="toggleApiKey" class="toggle-btn">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    <small class="help-text">
+                        您的 API 金鑰將安全地儲存在瀏覽器本地，不會上傳到任何伺服器。
+                        <a href="https://platform.openai.com/api-keys" target="_blank">如何獲取 API 金鑰？</a>
+                    </small>
+                </div>
+                <div class="setting-group">
+                    <div class="api-status">
+                        <span class="status-label">API 狀態：</span>
+                        <span id="apiStatus" class="status-indicator">未設定</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="saveSettings" class="btn-primary">儲存設定</button>
+                <button type="button" id="testApi" class="btn-secondary">測試連接</button>
+                <button type="button" id="clearSettings" class="btn-danger">清除設定</button>
+            </div>
+        </div>
+    </div>
+
     <footer class="footer">
         <div class="container">
             <p>&copy; 2023 寶寶扶養指南 - 基於八字分析的育兒指導平台</p>
@@ -438,6 +477,7 @@
     <script src="js/bazi-calculator.js"></script>
     <script src="js/analysis.js"></script>
     <script src="js/charts.js"></script>
+    <script src="js/settings.js"></script>
     <script src="js/main.js"></script>
 </body>
 </html>

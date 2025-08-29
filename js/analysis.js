@@ -6,6 +6,25 @@ class BaziAnalysis {
     constructor() {
         this.apiKey = null; // 用戶需要自行設置API金鑰
         this.apiEndpoint = 'https://api.openai.com/v1/chat/completions';
+        this.loadApiKey();
+    }
+
+    /**
+     * 從localStorage載入API金鑰
+     */
+    loadApiKey() {
+        const savedKey = localStorage.getItem('openai_api_key');
+        if (savedKey) {
+            this.apiKey = savedKey;
+        }
+    }
+
+    /**
+     * 更新API金鑰
+     * @param {string} key - 新的API金鑰
+     */
+    updateApiKey(key) {
+        this.apiKey = key;
     }
 
     /**
@@ -509,7 +528,7 @@ class BaziAnalysis {
      * @returns {Promise<string>} - API回應
      */
     async callGptApi(prompt) {
-        const apiKey = this.getApiKey();
+        const apiKey = this.apiKey;
         
         if (!apiKey) {
             throw new Error('未設置API金鑰');
