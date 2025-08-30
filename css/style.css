@@ -112,7 +112,7 @@ html {
     border-bottom-left-radius: var(--large-radius);
     border-bottom-right-radius: var(--large-radius);
     position: relative;
-    overflow: hidden;
+    overflow: visible;
 }
 
 .header::before {
@@ -2365,11 +2365,13 @@ select:focus, input[type="text"]:focus {
     align-items: center;
     justify-content: center;
     font-size: 1.2rem;
+    z-index: 100;
     /* 觸控友好設計 */
     -webkit-tap-highlight-color: transparent;
     touch-action: manipulation;
     min-height: 44px;
     min-width: 44px;
+    pointer-events: auto;
 }
 
 .settings-btn:hover {

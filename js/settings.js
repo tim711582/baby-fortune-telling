@@ -16,7 +16,11 @@ class SettingsManager {
         // 設定按鈕點擊事件
         const settingsBtn = document.getElementById('settingsBtn');
         if (settingsBtn) {
-            settingsBtn.addEventListener('click', () => this.openModal());
+            settingsBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                this.openModal();
+            });
         }
 
         // 模態框關閉事件
