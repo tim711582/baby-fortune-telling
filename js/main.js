@@ -319,21 +319,25 @@ function isGPTAnalysisEnabled() {
 
 /**
  * 顯示載入狀態
- * @param {string} selector - 選擇器
+ * @param {string} selector - 目標元素選擇器
  */
 function showLoadingState(selector) {
     const element = document.querySelector(selector);
     if (element) {
         element.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> 正在生成AI分析...</div>';
+        element.classList.add('loading-overlay');
     }
 }
 
 /**
  * 隱藏載入狀態
- * @param {string} selector - 選擇器
+ * @param {string} selector - 目標元素選擇器
  */
 function hideLoadingState(selector) {
-    // 載入狀態會在內容更新時自動被替換
+    const element = document.querySelector(selector);
+    if (element) {
+        element.classList.remove('loading-overlay');
+    }
 }
 
 /**
@@ -418,6 +422,11 @@ function updateBaziOverviewCards(bazi, elementAnalysis) {
     
     // 更新整體分析卡片
     updateOverallAnalysisCard(bazi, elementAnalysis);
+    
+    // 如果啟用GPT分析，觸發AI增強分析
+    if (isGPTAnalysisEnabled()) {
+        enhanceWithGPTAnalysis(bazi, elementAnalysis);
+    }
 }
 
 /**
@@ -554,6 +563,67 @@ function updateOverallAnalysisCard(bazi, elementAnalysis) {
     if (analysisEl) {
         const analysis = generateBaziAnalysis(bazi, elementAnalysis);
         analysisEl.innerHTML = analysis;
+    }
+}
+
+/**
+ * 使用 GPT API 增強八字總覽分析
+ * @param {Object} bazi - 八字信息
+ * @param {Object} elementAnalysis - 五行分析
+ */
+async function enhanceWithGPTAnalysis(bazi, elementAnalysis) {
+    const babyName = document.getElementById('babyName')?.value || '寶寶';
+    
+    try {
+        // 顯示載入狀態
+        showLoadingState('#overall-analysis-text');
+        
+        // 使用 GPT 生成增強分析
+        const gptAnalysis = await gptService.generateOverallSummary(bazi, elementAnalysis, babyName);
+        
+        // 更新整體分析內容
+        const analysisEl = document.getElementById('overall-analysis-text');
+        if (analysisEl && gptAnalysis) {
+            let enhancedContent = `<div class="gpt-enhanced-analysis">`;
+            
+            if (gptAnalysis.personalityHighlights) {
+                enhancedContent += `<h4>🌟 性格重點</h4><ul>`;
+                gptAnalysis.personalityHighlights.forEach(highlight => {
+                    enhancedContent += `<li>${highlight}</li>`;
+                });
+                enhancedContent += `</ul>`;
+            }
+            
+            if (gptAnalysis.ageStages) {
+                enhancedContent += `<h4>📈 成長階段摘要</h4>`;
+                if (gptAnalysis.ageStages.infant) {
+                    enhancedContent += `<p><strong>0-2歲：</strong>${gptAnalysis.ageStages.infant}</p>`;
+                }
+                if (gptAnalysis.ageStages.toddler) {
+                    enhancedContent += `<p><strong>3-4歲：</strong>${gptAnalysis.ageStages.toddler}</p>`;
+                }
+                if (gptAnalysis.ageStages.preschool) {
+                    enhancedContent += `<p><strong>5-6歲：</strong>${gptAnalysis.ageStages.preschool}</p>`;
+                }
+            }
+            
+            if (gptAnalysis.groupLifeAdvice) {
+                enhancedContent += `<h4>👥 團體生活建議</h4><ul>`;
+                gptAnalysis.groupLifeAdvice.forEach(advice => {
+                    enhancedContent += `<li>${advice}</li>`;
+                });
+                enhancedContent += `</ul>`;
+            }
+            
+            enhancedContent += `</div>`;
+            analysisEl.innerHTML = enhancedContent;
+        }
+        
+    } catch (error) {
+        console.error('GPT 增強分析失敗:', error);
+        showMessage('AI 分析暫時不可用，顯示基礎分析', 'warning');
+    } finally {
+        hideLoadingState('#overall-analysis-text');
     }
 }
 
