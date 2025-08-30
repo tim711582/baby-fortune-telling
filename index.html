@@ -23,29 +23,93 @@
             <h2>輸入寶寶出生資訊</h2>
             <form id="birthForm">
                 <div class="form-group">
-                    <label for="birthYear">出生年份</label>
-                    <select id="birthYear" required></select>
+                    <label for="babyName">寶寶姓名 <span class="optional">(選填)</span></label>
+                    <input type="text" id="babyName" placeholder="請輸入寶寶姓名">
                 </div>
-                <div class="form-group">
-                    <label for="birthMonth">出生月份</label>
-                    <select id="birthMonth" required></select>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="birthYear">出生年份</label>
+                        <select id="birthYear" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="birthMonth">出生月份</label>
+                        <select id="birthMonth" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="birthDay">出生日期</label>
+                        <select id="birthDay" required></select>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="birthDay">出生日期</label>
-                    <select id="birthDay" required></select>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="birthHour">出生時間</label>
+                        <select id="birthHour" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="gender">性別</label>
+                        <select id="gender" required>
+                            <option value="">請選擇</option>
+                            <option value="male">男</option>
+                            <option value="female">女</option>
+                        </select>
+                    </div>
                 </div>
+                
                 <div class="form-group">
-                    <label for="birthHour">出生時辰</label>
-                    <select id="birthHour" required></select>
+                    <label for="birthPlace">出生地點</label>
+                    <input type="text" id="birthPlace" placeholder="請輸入城市名稱，例如：台北市" required>
                 </div>
+                
                 <div class="form-group">
-                    <label for="gender">性別</label>
-                    <select id="gender" required>
-                        <option value="male">男</option>
-                        <option value="female">女</option>
+                    <label for="timezone">時區</label>
+                    <select id="timezone" required>
+                        <option value="">請選擇時區</option>
+                        <option value="Asia/Taipei" selected>台灣時間 (UTC+8)</option>
+                        <option value="Asia/Shanghai">中國標準時間 (UTC+8)</option>
+                        <option value="Asia/Hong_Kong">香港時間 (UTC+8)</option>
+                        <option value="Asia/Singapore">新加坡時間 (UTC+8)</option>
+                        <option value="America/New_York">美國東部時間 (UTC-5/-4)</option>
+                        <option value="America/Los_Angeles">美國西部時間 (UTC-8/-7)</option>
+                        <option value="Europe/London">英國時間 (UTC+0/+1)</option>
+                        <option value="Australia/Sydney">澳洲東部時間 (UTC+10/+11)</option>
                     </select>
                 </div>
-                <button type="submit" class="btn-primary">開始分析</button>
+                
+                <div class="form-group lunar-options">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="knowLunar">
+                        <span class="checkmark"></span>
+                        我知道農曆生日和閏月資訊
+                    </label>
+                </div>
+                
+                <div id="lunarDetails" class="lunar-details hidden">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="lunarYear">農曆年份</label>
+                            <select id="lunarYear"></select>
+                        </div>
+                        <div class="form-group">
+                            <label for="lunarMonth">農曆月份</label>
+                            <select id="lunarMonth"></select>
+                        </div>
+                        <div class="form-group">
+                            <label for="lunarDay">農曆日期</label>
+                            <select id="lunarDay"></select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="isLeapMonth">
+                            <span class="checkmark"></span>
+                            閏月
+                        </label>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn-primary">開始分析寶寶特質</button>
             </form>
         </section>
 
@@ -60,165 +124,178 @@
             <div id="overview" class="tab-content active">
                 <h2>八字總覽</h2>
                 
-                <!-- 傳統八字排盤 -->
-                <div class="traditional-bazi-chart">
-                    <!-- 頂部信息 -->
-                    <div class="chart-header">
-                        <div class="destiny-info">
-                            <div class="main-destiny">
-                                本命：<span id="mainDestiny" class="destiny-text"></span>
+                <!-- 基本資訊卡片 -->
+                <div class="bazi-overview-container">
+                    <!-- 出生資訊 -->
+                    <div class="info-card birth-info-card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-calendar-alt"></i> 出生資訊</h3>
+                        </div>
+                        <div class="card-content">
+                            <div class="info-row">
+                                <span class="label">陽曆：</span>
+                                <span id="solarDate" class="value">2025年2月7日3時</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">農曆：</span>
+                                <span id="lunarDate" class="value">2025年1月10日寅時</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">干支：</span>
+                                <span id="ganzhiDate" class="value">乙巳年戊寅月丁未日壬寅時</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">本命：</span>
+                                <span id="mainDestiny" class="value destiny-highlight"></span>
                             </div>
                         </div>
                     </div>
-                    
-                    <!-- 3x3九宮格排盤 -->
-                    <div class="bazi-grid-3x3">
-                        <!-- 第一行 -->
-                        <div class="palace palace-si" id="palace-si">
-                            <div class="palace-name">巳宮【交友宮】</div>
-                            <div class="palace-info">
-                                <div class="palace-numbers">大限:76-85</div>
-                                <div class="palace-numbers">小限:11 23 35 47 59 71 83</div>
-                                <div class="palace-stars">紫微旺,七殺平,火星,鳳閣,天才,天哭,天馬,絕,伏兵</div>
-                            </div>
+
+                    <!-- 八字四柱 -->
+                    <div class="info-card bazi-pillars-card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-yin-yang"></i> 八字四柱</h3>
                         </div>
-                        <div class="palace palace-wu" id="palace-wu">
-                            <div class="palace-name">午宮【遷移宮】</div>
-                            <div class="palace-info">
-                                <div class="palace-numbers">大限:66-75</div>
-                                <div class="palace-numbers">小限:12 24 36 48 60 72 84</div>
-                                <div class="palace-stars">文昌,截路,天空,高池,喜,天哭</div>
-                            </div>
-                        </div>
-                        <div class="palace palace-wei" id="palace-wei">
-                            <div class="palace-name">未宮【疾厄宮】</div>
-                            <div class="palace-info">
-                                <div class="palace-numbers">大限:56-65</div>
-                                <div class="palace-numbers">小限:1 13 25 37 49 61 73</div>
-                                <div class="palace-stars">空亡,華蓋,天使,死,病符</div>
-                            </div>
-                        </div>
-                        
-                        <!-- 第二行 -->
-                        <div class="palace palace-chen" id="palace-chen">
-                            <div class="palace-name">辰宮【事業宮-身宮】</div>
-                            <div class="palace-info">
-                                <div class="palace-numbers">大限:86-95</div>
-                                <div class="palace-numbers">小限:10 22 34 46 58 70 82</div>
-                                <div class="palace-stars">天魁旺,天梁旺,左輔,右弼,天才,天喜,天馬,青龍,感情,官府</div>
-                            </div>
-                        </div>
-                        <div class="palace center-info" id="center">
-                            <div class="birth-info">
-                                <div class="solar-date">陽曆：<span id="solarDate">2025年2月7日3時</span></div>
-                                <div class="lunar-date">農曆：<span id="lunarDate">2025年1月10日寅時</span></div>
-                                <div class="ganzhi-date">干支：<span id="ganzhiDate">乙巳年戊寅月丁未日壬寅時</span></div>
-                                <div class="wuxing-info">五行局：<span id="wuxingJu">露震火六局</span></div>
-                                <div class="sihua-info">生年四化：<span id="sihua">天梁化權,紫微化科,天機化祿,太陰化忌</span></div>
-                                <div class="ming-info">命主：<span id="mingzhu">貪狼,身主:天機</span></div>
-                            </div>
-                        </div>
-                        <div class="palace palace-shen" id="palace-shen">
-                            <div class="palace-name">申宮【財帛宮】</div>
-                            <div class="palace-info">
-                                <div class="palace-numbers">大限:46-55</div>
-                                <div class="palace-numbers">小限:2 14 26 38 50 62 74</div>
-                                <div class="palace-stars">文昌,天魁,天輔,孤辰,月馬,解神,台輔,病,喜神</div>
-                            </div>
-                        </div>
-                        
-                        <!-- 第三行 -->
-                        <div class="palace palace-hai" id="palace-hai">
-                            <div class="palace-name">亥宮【大限宮】</div>
-                            <div class="palace-info">
-                                <div class="palace-numbers">大限:26-35</div>
-                                <div class="palace-numbers">小限:4 16 28 40 52 64 76</div>
-                                <div class="palace-stars">紫微旺,破軍旺,左輔,右弼,天魁,天鉞,文昌,文曲</div>
-                            </div>
-                        </div>
-                        <div class="palace palace-xu" id="palace-xu">
-                            <div class="palace-name">戌宮【疾厄宮】</div>
-                            <div class="palace-info">
-                                <div class="palace-numbers">大限:36-45</div>
-                                <div class="palace-numbers">小限:3 15 27 39 51 63 75</div>
-                                <div class="palace-stars">廉貞平,破軍陷,地劫,龍德,破碎,天刑,太刑,飛廉</div>
-                            </div>
-                        </div>
-                        <div class="palace palace-mao" id="palace-mao">
-                            <div class="palace-name">卯宮【田宅宮】</div>
-                            <div class="palace-info">
-                                <div class="palace-numbers">大限:96-105</div>
-                                <div class="palace-numbers">小限:9 21 33 45 57 69 81</div>
-                                <div class="palace-stars">天相陷,祿存,旬空,喜神,博士</div>
-                            </div>
-                        </div>
-                        <div class="palace palace-yin" id="palace-yin">
-                            <div class="palace-name">寅宮【父母宮】</div>
-                            <div class="palace-info">
-                                <div class="palace-numbers">大限:106-115</div>
-                                <div class="palace-numbers">小限:8 20 32 44 56 68 80</div>
-                                <div class="palace-stars">武曲陷,貪狼陷,地劫,陰煞,天哭,天虛,三台,八座,沐浴,青龍</div>
-                            </div>
-                        </div>
-                        <div class="palace palace-chou" id="palace-chou">
-                            <div class="palace-name">丑宮【命宮】</div>
-                            <div class="palace-info">
-                                <div class="palace-numbers">大限:6-15</div>
-                                <div class="palace-numbers">小限:6 18 30 42 54 66 78</div>
-                                <div class="palace-stars">太陽旺,太陰旺,巨門旺,小耗</div>
-                            </div>
-                        </div>
-                        <div class="palace palace-zi" id="palace-zi">
-                            <div class="palace-name">子宮【兄弟宮】</div>
-                            <div class="palace-info">
-                                <div class="palace-numbers">大限:16-25</div>
-                                <div class="palace-numbers">小限:5 17 29 41 53 65 77</div>
-                                <div class="palace-stars">天府旺,天馬,天虛,龍德,暗祿</div>
+                        <div class="card-content">
+                            <div class="pillars-container">
+                                <div class="pillar-item">
+                                    <div class="pillar-label">年柱</div>
+                                    <div id="yearPillar" class="pillar-value"></div>
+                                    <div class="pillar-element" id="yearElement"></div>
+                                </div>
+                                <div class="pillar-item">
+                                    <div class="pillar-label">月柱</div>
+                                    <div id="monthPillar" class="pillar-value"></div>
+                                    <div class="pillar-element" id="monthElement"></div>
+                                </div>
+                                <div class="pillar-item">
+                                    <div class="pillar-label">日柱</div>
+                                    <div id="dayPillar" class="pillar-value"></div>
+                                    <div class="pillar-element" id="dayElement"></div>
+                                </div>
+                                <div class="pillar-item">
+                                    <div class="pillar-label">時柱</div>
+                                    <div id="hourPillar" class="pillar-value"></div>
+                                    <div class="pillar-element" id="hourElement"></div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    
-                    <!-- 底部星盤度數與吉凶分析 -->
-                    <div class="chart-footer">
-                        <div class="degree-analysis">
-                            <h4>十二星宮度數與吉凶分析</h4>
-                            <div id="degreeAnalysis" class="degree-content"></div>
+
+                    <!-- 五行分析 -->
+                    <div class="info-card elements-card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-leaf"></i> 五行分析</h3>
+                        </div>
+                        <div class="card-content">
+                            <div class="elements-summary">
+                                <div class="element-stats" id="elementStats"></div>
+                                <div class="element-chart-mini">
+                                    <canvas id="elementsChart" width="200" height="200"></canvas>
+                                </div>
+                            </div>
+                            <div class="elements-details">
+                                <div class="element-analysis">
+                                    <div class="analysis-item">
+                                        <span class="analysis-label">日主五行：</span>
+                                        <span id="dayMainElement" class="analysis-value"></span>
+                                    </div>
+                                    <div class="analysis-item">
+                                        <span class="analysis-label">五行強弱：</span>
+                                        <span id="elementStrength" class="analysis-value"></span>
+                                    </div>
+                                    <div class="analysis-item">
+                                        <span class="analysis-label">喜用神：</span>
+                                        <span id="favorableElements" class="analysis-value"></span>
+                                    </div>
+                                    <div class="analysis-item">
+                                        <span class="analysis-label">忌神：</span>
+                                        <span id="unfavorableElements" class="analysis-value"></span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-                
-                <div class="bazi-grid">
-                    <div class="bazi-cell">
-                        <h3>年柱</h3>
-                        <div id="yearPillar" class="pillar"></div>
+
+                    <!-- 命理特徵 -->
+                    <div class="info-card destiny-features-card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-star"></i> 命理特徵</h3>
+                        </div>
+                        <div class="card-content">
+                            <div class="features-grid">
+                                <div class="feature-item">
+                                    <div class="feature-label">五行局</div>
+                                    <div id="wuxingJu" class="feature-value"></div>
+                                </div>
+                                <div class="feature-item">
+                                    <div class="feature-label">生年四化</div>
+                                    <div id="sihua" class="feature-value"></div>
+                                </div>
+                                <div class="feature-item">
+                                    <div class="feature-label">命主星</div>
+                                    <div id="mingzhu" class="feature-value"></div>
+                                </div>
+                                <div class="feature-item">
+                                    <div class="feature-label">納音</div>
+                                    <div id="nayin" class="feature-value"></div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="bazi-cell">
-                        <h3>月柱</h3>
-                        <div id="monthPillar" class="pillar"></div>
+
+                    <!-- 天干地支詳解 -->
+                    <div class="info-card stems-branches-card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-tree"></i> 天干地支詳解</h3>
+                        </div>
+                        <div class="card-content">
+                            <div class="stems-branches-grid">
+                                <div class="sb-section">
+                                    <h4>天干</h4>
+                                    <div class="sb-items" id="stemsDetails"></div>
+                                </div>
+                                <div class="sb-section">
+                                    <h4>地支</h4>
+                                    <div class="sb-items" id="branchesDetails"></div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="bazi-cell">
-                        <h3>日柱</h3>
-                        <div id="dayPillar" class="pillar"></div>
+
+                    <!-- 整體分析 -->
+                    <div class="info-card overall-analysis-card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-chart-line"></i> 整體分析</h3>
+                        </div>
+                        <div class="card-content">
+                            <div id="overallAnalysis" class="analysis-text"></div>
+                        </div>
                     </div>
-                    <div class="bazi-cell">
-                        <h3>時柱</h3>
-                        <div id="hourPillar" class="pillar"></div>
-                    </div>
-                </div>
-                <div class="five-elements">
-                    <h3>五行分布</h3>
-                    <div class="chart-container">
-                        <canvas id="elementsChart"></canvas>
-                    </div>
-                </div>
-                <div class="overall-analysis">
-                    <h3>整體分析</h3>
-                    <div id="overallAnalysis" class="analysis-text"></div>
                 </div>
             </div>
 
             <div id="personality" class="tab-content">
                 <h2>性格分析與扶養指南</h2>
+                
+                <!-- 整體摘要 -->
+                <div class="personality-section">
+                    <h3><i class="fas fa-star"></i> 整體摘要（0-6歲）</h3>
+                    <div class="overall-summary">
+                        <div class="summary-card">
+                            <h4><i class="fas fa-heart"></i> 性格重點</h4>
+                            <div id="personalityHighlights" class="summary-content"></div>
+                        </div>
+                        <div class="summary-card">
+                            <h4><i class="fas fa-calendar-alt"></i> 年齡段摘要</h4>
+                            <div id="ageStageSummary" class="summary-content"></div>
+                        </div>
+                        <div class="summary-card">
+                            <h4><i class="fas fa-users"></i> 團體生活建議</h4>
+                            <div id="groupLifeAdvice" class="summary-content"></div>
+                        </div>
+                    </div>
+                </div>
                 
                 <!-- 基本性格特質 -->
                 <div class="personality-section">
@@ -400,25 +477,24 @@
             </div>
 
             <div id="monthly" class="tab-content">
-                <h2>月份指南</h2>
-                <div class="age-selector">
-                    <label for="ageSelect">選擇年齡:</label>
-                    <select id="ageSelect"></select>
-                </div>
-                <div class="months-grid" id="monthsGrid">
-                    <!-- 月份指南將在這裡動態生成 -->
+                <h2>0-12月月齡表格</h2>
+                <p class="monthly-description">根據寶寶八字特質，提供每個月齡階段的帶養特色、挑戰與照護建議</p>
+                <div class="monthly-table-container" id="monthlyTableContainer">
+                    <!-- 月齡表格將在這裡動態生成 -->
                 </div>
             </div>
 
             <div id="chart" class="tab-content">
-                <h2>成長圖表</h2>
+                <h2>0-12月好帶指數</h2>
                 <div class="chart-options">
-                    <label for="chartType">圖表類型:</label>
-                    <select id="chartType">
-                        <option value="elements">五行變化</option>
-                        <option value="stars">星耀強度</option>
-                        <option value="phases">成長階段</option>
-                    </select>
+                    <div class="download-buttons">
+                        <button type="button" class="download-btn" onclick="baziCharts.downloadChartAsPNG('growthChart', '寶寶好帶指數圖表')">
+                            <i class="fas fa-download"></i> 下載PNG
+                        </button>
+                        <button type="button" class="download-btn" onclick="baziCharts.downloadChartAsPDF('growthChart', '寶寶好帶指數圖表')">
+                            <i class="fas fa-file-pdf"></i> 下載PDF
+                        </button>
+                    </div>
                 </div>
                 <div class="chart-container">
                     <canvas id="growthChart"></canvas>
@@ -450,10 +526,29 @@
                     </small>
                 </div>
                 <div class="setting-group">
+                    <label>
+                        <input type="checkbox" id="enableGPTAnalysis">
+                        啟用 GPT AI 分析
+                    </label>
+                    <small class="help-text">使用 AI 生成更個性化的分析內容</small>
+                </div>
+                <div class="setting-group">
                     <div class="api-status">
                         <span class="status-label">API 狀態：</span>
                         <span id="apiStatus" class="status-indicator">未設定</span>
                     </div>
+                </div>
+                <div class="setting-group">
+                    <label>
+                        <input type="checkbox" id="showCharts" checked>
+                        顯示圖表
+                    </label>
+                </div>
+                <div class="setting-group">
+                    <label>
+                        <input type="checkbox" id="showDetailedAnalysis" checked>
+                        顯示詳細分析
+                    </label>
                 </div>
             </div>
             <div class="modal-footer">
@@ -471,10 +566,12 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="js/bazi-calculator.js"></script>
     <script src="js/analysis.js"></script>
     <script src="js/charts.js"></script>
-    <script src="js/settings.js"></script>
+    <script src="js/gpt-service.js"></script>
     <script src="js/main.js"></script>
+    <script src="js/settings.js"></script>
 </body>
 </html>

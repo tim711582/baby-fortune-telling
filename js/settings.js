@@ -70,12 +70,28 @@ class SettingsManager {
     // 載入設定
     loadSettings() {
         try {
-            const savedApiKey = localStorage.getItem('openai_api_key');
-            if (savedApiKey) {
-                this.apiKey = savedApiKey;
+            // 載入API密鑰
+            this.apiKey = localStorage.getItem('openai_api_key');
+            if (this.apiKey && typeof gptService !== 'undefined') {
+                gptService.setApiKey(this.apiKey);
+            }
+            
+            // 載入其他設定
+            const settingsStr = localStorage.getItem('app_settings');
+            if (settingsStr) {
+                const settings = JSON.parse(settingsStr);
+                
+                // 更新UI元素
+                const enableGPTCheckbox = document.getElementById('enableGPTAnalysis');
+                const showChartsCheckbox = document.getElementById('showCharts');
+                const showDetailedAnalysisCheckbox = document.getElementById('showDetailedAnalysis');
+                
+                if (enableGPTCheckbox) enableGPTCheckbox.checked = settings.enableGPTAnalysis ?? false;
+                if (showChartsCheckbox) showChartsCheckbox.checked = settings.showCharts ?? true;
+                if (showDetailedAnalysisCheckbox) showDetailedAnalysisCheckbox.checked = settings.showDetailedAnalysis ?? true;
             }
         } catch (error) {
-            console.warn('無法載入設定:', error);
+            console.error('載入設定失敗:', error);
         }
     }
 
@@ -140,33 +156,49 @@ class SettingsManager {
     // 儲存設定
     saveSettings() {
         const apiKeyInput = document.getElementById('apiKeyInput');
-        const apiKey = apiKeyInput?.value.trim();
-
-        if (!apiKey) {
-            this.showMessage('請輸入 API 金鑰', 'error');
-            return;
-        }
-
-        // 驗證 API 金鑰格式
-        if (!this.validateApiKeyFormat(apiKey)) {
-            this.showMessage('API 金鑰格式不正確，應以 sk- 開頭', 'error');
-            return;
-        }
-
-        try {
-            localStorage.setItem('openai_api_key', apiKey);
-            this.apiKey = apiKey;
-            this.updateUI();
-            this.showMessage('設定已儲存', 'success');
+        const enableGPTCheckbox = document.getElementById('enableGPTAnalysis');
+        const showChartsCheckbox = document.getElementById('showCharts');
+        const showDetailedAnalysisCheckbox = document.getElementById('showDetailedAnalysis');
+        
+        if (apiKeyInput) {
+            const newApiKey = apiKeyInput.value.trim();
             
-            // 通知其他模組 API 金鑰已更新
-            if (window.baziAnalysis) {
-                window.baziAnalysis.updateApiKey(apiKey);
+            // 驗證 API 金鑰格式
+            if (newApiKey && !this.validateApiKeyFormat(newApiKey)) {
+                this.showMessage('API 金鑰格式不正確，請檢查後重新輸入', 'error');
+                return;
             }
-        } catch (error) {
-            console.error('儲存設定失敗:', error);
-            this.showMessage('儲存失敗，請檢查瀏覽器設定', 'error');
+            
+            this.apiKey = newApiKey;
+            
+            // 儲存到 localStorage
+            if (newApiKey) {
+                localStorage.setItem('openai_api_key', newApiKey);
+                // 設置GPT服務的API密鑰
+                if (typeof gptService !== 'undefined') {
+                    gptService.setApiKey(newApiKey);
+                }
+            } else {
+                localStorage.removeItem('openai_api_key');
+            }
         }
+        
+        // 儲存其他設定
+        const settings = {
+            enableGPTAnalysis: enableGPTCheckbox?.checked ?? false,
+            showCharts: showChartsCheckbox?.checked ?? true,
+            showDetailedAnalysis: showDetailedAnalysisCheckbox?.checked ?? true
+        };
+        
+        localStorage.setItem('app_settings', JSON.stringify(settings));
+        
+        this.updateUI();
+        this.showMessage('設定已儲存', 'success');
+        
+        // 延遲關閉模態框
+        setTimeout(() => {
+            this.closeModal();
+        }, 1000);
     }
 
     // 測試 API 連接

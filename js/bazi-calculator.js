@@ -103,10 +103,16 @@ class BaziCalculator {
      * @returns {string} - 天干地支月柱
      */
     getMonthPillar(year, month) {
-        // 簡化計算，實際應考慮節氣
+        // 改進的月柱計算，考慮年干和月份
         const yearStem = (year - 4) % 10;
-        let monthStem = (yearStem * 2 + month) % 10;
-        const monthBranch = (month + 1) % 12;
+        
+        // 月柱天干計算公式：年干 * 2 + 月份
+        let monthStem = (yearStem * 2 + month - 1) % 10;
+        if (monthStem < 0) monthStem += 10;
+        
+        // 月柱地支：寅月為正月，依次類推
+        let monthBranch = (month + 1) % 12;
+        if (monthBranch < 0) monthBranch += 12;
         
         return this.heavenlyStems[monthStem] + this.earthlyBranches[monthBranch];
     }
@@ -119,14 +125,18 @@ class BaziCalculator {
      * @returns {string} - 天干地支日柱
      */
     getDayPillar(year, month, day) {
-        // 簡化計算，實際應使用更準確的算法
-        // 基準日期：1900年1月1日，天干地支：庚子
+        // 改進的日柱計算，使用更準確的算法
+        // 基準日期：1900年1月1日為庚子日
         const baseDate = new Date(1900, 0, 1);
         const targetDate = new Date(year, month - 1, day);
         const diffDays = Math.floor((targetDate - baseDate) / (24 * 60 * 60 * 1000));
         
-        const stemIndex = (diffDays + 6) % 10; // 6是庚的索引
-        const branchIndex = (diffDays + 0) % 12; // 0是子的索引
+        // 確保計算結果為正數
+        let stemIndex = (diffDays + 6) % 10; // 6是庚的索引
+        let branchIndex = (diffDays + 0) % 12; // 0是子的索引
+        
+        if (stemIndex < 0) stemIndex += 10;
+        if (branchIndex < 0) branchIndex += 12;
         
         return this.heavenlyStems[stemIndex] + this.earthlyBranches[branchIndex];
     }
@@ -149,11 +159,24 @@ class BaziCalculator {
         const hourBranch = this.hourToBranch[hour];
         const hourBranchIndex = this.earthlyBranches.indexOf(hourBranch);
         
-        // 計算時柱天干
-        const hourStemIndex = (dayStemIndex * 2 + hourBranchIndex) % 10;
-        const hourStem = this.heavenlyStems[hourStemIndex];
+        // 時柱天干計算：日干配時支
+        // 甲己日起甲子，乙庚日起丙子，丙辛日起戊子，丁壬日起庚子，戊癸日起壬子
+        const hourStemBase = [0, 2, 4, 6, 8]; // 甲丙戊庚壬的索引
+        let hourStemIndex;
         
-        return hourStem + hourBranch;
+        if (dayStemIndex === 0 || dayStemIndex === 5) { // 甲日或己日
+            hourStemIndex = (0 + hourBranchIndex) % 10;
+        } else if (dayStemIndex === 1 || dayStemIndex === 6) { // 乙日或庚日
+            hourStemIndex = (2 + hourBranchIndex) % 10;
+        } else if (dayStemIndex === 2 || dayStemIndex === 7) { // 丙日或辛日
+            hourStemIndex = (4 + hourBranchIndex) % 10;
+        } else if (dayStemIndex === 3 || dayStemIndex === 8) { // 丁日或壬日
+            hourStemIndex = (6 + hourBranchIndex) % 10;
+        } else { // 戊日或癸日
+            hourStemIndex = (8 + hourBranchIndex) % 10;
+        }
+        
+        return this.heavenlyStems[hourStemIndex] + hourBranch;
     }
 
     /**
@@ -342,59 +365,65 @@ class BaziCalculator {
      * @param {Object} elementAnalysis - 五行分析
      * @returns {Object} - 性格分析
      */
+    /**
+     * 分析寶寶性格與情緒傾向標籤
+     * @param {Object} bazi - 八字信息
+     * @param {Object} elementAnalysis - 五行分析結果
+     * @returns {Object} - 包含5-8個性格標籤的分析結果
+     */
     analyzePersonality(bazi, elementAnalysis) {
-        const traits = [];
+        const personalityTags = [];
         const details = [];
         
-        // 根據日主五行分析基本性格
+        // 根據日主五行分析寶寶基本性格傾向
         const dayElement = elementAnalysis.dayElement;
         
         switch (dayElement) {
             case "木":
-                traits.push("仁愛", "正直", "進取", "創新");
-                details.push("木主仁，性格溫和有愛心，重視家庭與人際關係。");
-                details.push("具有理想主義傾向，追求成長與發展，喜歡新事物。");
-                details.push("有組織能力和領導才能，但可能固執己見。");
+                personalityTags.push("好奇心旺", "依附敏感", "成長導向");
+                details.push("木質寶寶天生好奇，對新事物充滿興趣，喜歡探索環境。");
+                details.push("對主要照顧者依附性較強，需要穩定的情感連結。");
+                details.push("具有強烈的成長慾望，學習能力佳，適應力強。");
                 break;
             case "火":
-                traits.push("熱情", "活力", "表達力強", "直覺敏銳");
-                details.push("火主禮，性格熱情開朗，善於表達與社交。");
-                details.push("具有創造力和想像力，反應快速，直覺敏銳。");
-                details.push("情緒波動較大，容易衝動，需注意穩定性。");
+                personalityTags.push("活力充沛", "表達豐富", "情緒波動");
+                details.push("火質寶寶精力旺盛，喜歡互動和表達，反應敏捷。");
+                details.push("情感表達直接豐富，容易感染他人情緒。");
+                details.push("情緒變化較快，需要耐心引導情緒管理。");
                 break;
             case "土":
-                traits.push("穩重", "踏實", "忠誠", "包容");
-                details.push("土主信，性格穩重踏實，值得信賴。");
-                details.push("重視家庭和傳統，有責任感和使命感。");
-                details.push("做事謹慎，講求實際，但可能過於保守。");
+                personalityTags.push("規律依賴", "可安撫", "穩定需求");
+                details.push("土質寶寶喜歡規律作息，對環境變化較為敏感。");
+                details.push("容易被安撫，喜歡重複性的安全感活動。");
+                details.push("需要穩定的環境和照顧模式，適應新環境需要時間。");
                 break;
             case "金":
-                traits.push("果斷", "公正", "自律", "精確");
-                details.push("金主義，性格剛毅果斷，重視公平與正義。");
-                details.push("做事有條理，追求完美，注重細節。");
-                details.push("自律性強，但可能過於嚴格，不夠靈活。");
+                personalityTags.push("秩序偏好", "精細敏感", "自律傾向");
+                details.push("金質寶寶喜歡有序的環境，對細節變化敏感。");
+                details.push("觸覺和聽覺較為敏銳，容易受環境刺激影響。");
+                details.push("具有自我調節的潛力，但需要適當的引導和支持。");
                 break;
             case "水":
-                traits.push("聰明", "靈活", "適應力強", "深思熟慮");
-                details.push("水主智，思維靈活，學習能力強，適應性好。");
-                details.push("善於溝通和理解，有哲學思考傾向。");
-                details.push("情感豐富但內斂，處事圓滑但可能優柔寡斷。");
+                personalityTags.push("適應靈活", "觀察敏銳", "內向傾向");
+                details.push("水質寶寶適應能力強，能夠靈活應對環境變化。");
+                details.push("觀察力敏銳，喜歡靜靜觀察周圍的人事物。");
+                details.push("可能較為內向，需要溫和的鼓勵來表達自己。");
                 break;
         }
         
-        // 根據五行強弱分析性格傾向
+        // 根據五行強弱分析情緒調節能力
         if (elementAnalysis.dayElementStrength === "強") {
-            traits.push("自信", "主動", "獨立");
-            details.push(`日主${dayElement}強，性格較為自信主動，有獨立精神和主見。`);
+            personalityTags.push("自主性強");
+            details.push("寶寶自主性較強，有自己的想法和偏好，需要尊重其個性。");
         } else if (elementAnalysis.dayElementStrength === "弱") {
-            traits.push("謙和", "順應", "靈活");
-            details.push(`日主${dayElement}弱，性格較為謙和，善於順應環境，靈活變通。`);
+            personalityTags.push("需要支持");
+            details.push("寶寶較需要外在支持和鼓勵，在安全感充足時表現更佳。");
         } else {
-            traits.push("平衡", "中庸");
-            details.push(`日主${dayElement}中和，性格較為平衡，能夠中庸處世。`);
+            personalityTags.push("平衡發展");
+            details.push("寶寶各方面發展較為平衡，容易建立穩定的作息和習慣。");
         }
         
-        // 分析地支組合
+        // 分析地支組合對情緒模式的影響
         const branches = [
             bazi.yearPillar.charAt(1),
             bazi.monthPillar.charAt(1),
@@ -402,28 +431,42 @@ class BaziCalculator {
             bazi.hourPillar.charAt(1)
         ];
         
-        // 檢查是否有三合
-        const woodCombination = ['寅', '卯', '辰'];
-        const fireCombination = ['巳', '午', '未'];
-        const metalCombination = ['申', '酉', '戌'];
-        const waterCombination = ['亥', '子', '丑'];
+        // 檢查特殊組合
+        const hasWaterElements = branches.filter(branch => ['子', '亥'].includes(branch)).length;
+        const hasFireElements = branches.filter(branch => ['午', '巳'].includes(branch)).length;
+        const hasEarthElements = branches.filter(branch => ['丑', '辰', '未', '戌'].includes(branch)).length;
         
-        const combinations = [woodCombination, fireCombination, metalCombination, waterCombination];
-        const combinationNames = ['木局', '火局', '金局', '水局'];
+        if (hasWaterElements >= 2) {
+            personalityTags.push("情感豐富");
+            details.push("情感世界豐富，對情緒變化敏感，需要情感上的理解和支持。");
+        }
         
-        for (let i = 0; i < combinations.length; i++) {
-            const combo = combinations[i];
-            const count = branches.filter(branch => combo.includes(branch)).length;
-            
-            if (count >= 2) {
-                traits.push(combinationNames[i]);
-                details.push(`八字中有${combinationNames[i]}傾向，增強相關五行特質。`);
+        if (hasFireElements >= 2) {
+            personalityTags.push("社交傾向");
+            details.push("喜歡與人互動，在社交環境中表現活躍，容易成為注意焦點。");
+        }
+        
+        if (hasEarthElements >= 2) {
+            personalityTags.push("安全導向");
+            details.push("對安全感需求較高，喜歡熟悉的環境和人物，變化需要循序漸進。");
+        }
+        
+        // 確保標籤數量在5-8個之間
+        const finalTags = personalityTags.slice(0, 8);
+        if (finalTags.length < 5) {
+            // 如果標籤不足5個，根據整體八字特徵補充
+            const additionalTags = ["溫和親近", "學習導向", "創意潛能"];
+            for (let tag of additionalTags) {
+                if (finalTags.length < 5 && !finalTags.includes(tag)) {
+                    finalTags.push(tag);
+                }
             }
         }
         
         return {
-            traits,
-            details
+            personalityTags: finalTags,
+            details,
+            summary: `根據八字分析，寶寶具有${finalTags.join('、')}等特質，建議照顧者針對這些特點制定相應的照護策略。`
         };
     }
 
@@ -632,7 +675,457 @@ class BaziCalculator {
     }
 
     /**
-     * 生成月份指南
+     * 生成整體摘要（0-6歲）
+     * @param {Object} bazi - 八字信息
+     * @param {Object} elementAnalysis - 五行分析
+     * @returns {Object} - 整體摘要數據
+     */
+    generateOverallSummary(bazi, elementAnalysis) {
+        const dayElement = elementAnalysis.dayElement;
+        const strength = elementAnalysis.dayElementStrength;
+        const favorable = elementAnalysis.favorable;
+        
+        return {
+            personalityHighlights: this.getPersonalityHighlights(dayElement, strength),
+            ageStageSummary: this.getAgeStageSummary(dayElement, strength),
+            groupLifeAdvice: this.getGroupLifeAdvice(dayElement, strength, favorable)
+        };
+    }
+
+    /**
+     * 獲取性格重點
+     * @param {string} dayElement - 日主五行
+     * @param {string} strength - 五行強弱
+     * @returns {Array} - 性格重點列表
+     */
+    getPersonalityHighlights(dayElement, strength) {
+        const baseTraits = {
+            '木': ['富有創造力和想像力', '喜歡探索和學習新事物', '具有成長導向的思維', '天生的領導潛質'],
+            '火': ['熱情活潑，表達能力強', '情感豐富，善於社交', '具有藝術天賦和創造力', '樂觀積極的生活態度'],
+            '土': ['穩重可靠，適應力強', '具有責任感和耐心', '善於照顧他人', '實用主義的思考方式'],
+            '金': ['邏輯思維清晰', '注重秩序和規律', '具有分析和判斷能力', '追求完美和精確'],
+            '水': ['感受力敏銳，直覺力強', '善於傾聽和理解他人', '具有深度思考能力', '適應變化的靈活性']
+        };
+        
+        let traits = [...baseTraits[dayElement]];
+        
+        if (strength === '強') {
+            const strongTraits = {
+                '木': ['個性較為堅持，需要引導學習妥協'],
+                '火': ['情緒表達強烈，需要學習情緒管理'],
+                '土': ['可能較為固執，需要鼓勵接受新事物'],
+                '金': ['標準較高，需要學習包容和彈性'],
+                '水': ['情感深刻，需要適當的情緒出口']
+            };
+            traits.push(...strongTraits[dayElement]);
+        } else {
+            const weakTraits = {
+                '木': ['需要鼓勵表達想法，增強自信心'],
+                '火': ['需要多一些溫暖互動，培養表達能力'],
+                '土': ['需要穩定環境，逐步建立安全感'],
+                '金': ['需要清晰指導，建立自信和條理'],
+                '水': ['需要情感支持，培養表達和溝通能力']
+            };
+            traits.push(...weakTraits[dayElement]);
+        }
+        
+        return traits;
+    }
+
+    /**
+     * 獲取年齡段摘要
+     * @param {string} dayElement - 日主五行
+     * @param {string} strength - 五行強弱
+     * @returns {Object} - 年齡段摘要
+     */
+    getAgeStageSummary(dayElement, strength) {
+        return {
+            '0-2歲': this.getInfantStageSummary(dayElement, strength),
+            '3-4歲': this.getToddlerStageSummary(dayElement, strength),
+            '5-6歲': this.getPreschoolStageSummary(dayElement, strength)
+        };
+    }
+
+    /**
+     * 獲取0-2歲階段摘要
+     */
+    getInfantStageSummary(dayElement, strength) {
+        const baseSummary = {
+            '木': '需要充足的自由探索空間，對新環境適應較快',
+            '火': '情感表達豐富，需要溫暖的互動和回應',
+            '土': '喜歡穩定的環境和規律，適應變化需要時間',
+            '金': '對環境敏感，需要整潔有序的照護環境',
+            '水': '感受力強，需要安靜舒適的環境和情感連結'
+        };
+        
+        let summary = baseSummary[dayElement];
+        
+        if (strength === '強') {
+            summary += '，個性較為明顯，需要耐心引導';
+        } else {
+            summary += '，需要更多鼓勵和支持來建立自信';
+        }
+        
+        return summary;
+    }
+
+    /**
+     * 獲取3-4歲階段摘要
+     */
+    getToddlerStageSummary(dayElement, strength) {
+        const baseSummary = {
+            '木': '創造力開始顯現，喜歡動手操作和探索',
+            '火': '社交能力發展，喜歡與人互動和表演',
+            '土': '責任感萌芽，喜歡幫助他人和參與家務',
+            '金': '邏輯思維開始發展，喜歡分類和整理',
+            '水': '想像力豐富，喜歡聽故事和安靜的活動'
+        };
+        
+        let summary = baseSummary[dayElement];
+        
+        if (strength === '強') {
+            summary += '，自主性較強，需要適當的界限設定';
+        } else {
+            summary += '，需要鼓勵嘗試新事物，培養自信心';
+        }
+        
+        return summary;
+    }
+
+    /**
+     * 獲取5-6歲階段摘要
+     */
+    getPreschoolStageSummary(dayElement, strength) {
+        const baseSummary = {
+            '木': '領導能力顯現，適合參與團體活動和創意遊戲',
+            '火': '表達能力強，適合藝術創作和表演活動',
+            '土': '穩定性增強，適合承擔小責任和幫助他人',
+            '金': '分析能力發展，適合邏輯遊戲和規則性活動',
+            '水': '理解力深刻，適合閱讀和需要專注的活動'
+        };
+        
+        let summary = baseSummary[dayElement];
+        
+        if (strength === '強') {
+            summary += '，準備好迎接更多挑戰和學習機會';
+        } else {
+            summary += '，需要循序漸進的引導和充分的準備時間';
+        }
+        
+        return summary;
+    }
+
+    /**
+     * 獲取團體生活建議
+     * @param {string} dayElement - 日主五行
+     * @param {string} strength - 五行強弱
+     * @param {Array} favorable - 有利五行
+     * @returns {Array} - 團體生活建議列表
+     */
+    getGroupLifeAdvice(dayElement, strength, favorable) {
+        const baseAdvice = {
+            '木': [
+                '鼓勵參與需要創意和領導的團體活動',
+                '教導分享和輪流的概念',
+                '培養團隊合作精神，學習聆聽他人意見'
+            ],
+            '火': [
+                '提供表達和展示的機會',
+                '教導情緒管理和同理心',
+                '鼓勵參與互動性強的團體遊戲'
+            ],
+            '土': [
+                '安排穩定的團體環境和固定夥伴',
+                '鼓勵承擔小組責任和幫助他人',
+                '逐步適應團體規則和變化'
+            ],
+            '金': [
+                '提供清晰的團體規則和期望',
+                '鼓勵參與有組織的活動',
+                '培養公平競爭和遵守規則的精神'
+            ],
+            '水': [
+                '提供安靜和諧的團體環境',
+                '鼓勵深度交流和建立友誼',
+                '培養傾聽和理解他人的能力'
+            ]
+        };
+        
+        let advice = [...baseAdvice[dayElement]];
+        
+        if (strength === '強') {
+            advice.push('需要學習謙讓和包容，避免過於堅持己見');
+        } else {
+            advice.push('需要鼓勵表達想法，增強在團體中的自信心');
+        }
+        
+        // 根據有利五行添加建議
+        if (favorable.includes('木')) {
+            advice.push('適合參與戶外和自然相關的團體活動');
+        }
+        if (favorable.includes('火')) {
+            advice.push('適合參與熱鬧和互動性強的團體活動');
+        }
+        if (favorable.includes('土')) {
+            advice.push('適合參與穩定和有規律的團體活動');
+        }
+        if (favorable.includes('金')) {
+            advice.push('適合參與有組織和競爭性的團體活動');
+        }
+        if (favorable.includes('水')) {
+            advice.push('適合參與安靜和需要專注的團體活動');
+        }
+        
+        return advice;
+    }
+
+    /**
+     * 生成0-12月月齡表格
+     * @param {Object} bazi - 八字信息
+     * @param {Object} elementAnalysis - 五行分析
+     * @returns {Array} - 月齡表格數據
+     */
+    generateMonthlyTable(bazi, elementAnalysis) {
+        const monthlyTable = [];
+        const dayElement = elementAnalysis.dayElement;
+        const favorable = elementAnalysis.favorable;
+        
+        // 將12個月分為6個階段，每2月一組
+        const stages = [
+            { months: [0, 1], title: "0-1月", period: "新生兒期" },
+            { months: [2, 3], title: "2-3月", period: "適應期" },
+            { months: [4, 5], title: "4-5月", period: "互動期" },
+            { months: [6, 7], title: "6-7月", period: "探索期" },
+            { months: [8, 9], title: "8-9月", period: "爬行期" },
+            { months: [10, 11, 12], title: "10-12月", period: "學步期" }
+        ];
+        
+        stages.forEach(stage => {
+            const stageData = this.getMonthlyStageData(stage, dayElement, favorable);
+            monthlyTable.push(stageData);
+        });
+        
+        return monthlyTable;
+    }
+    
+    /**
+     * 獲取月齡階段數據
+     * @param {Object} stage - 階段信息
+     * @param {string} dayElement - 日主五行
+     * @param {Array} favorable - 有利五行
+     * @returns {Object} - 階段數據
+     */
+    getMonthlyStageData(stage, dayElement, favorable) {
+        const { months, title, period } = stage;
+        
+        return {
+            title,
+            period,
+            months,
+            characteristics: this.getStageCharacteristics(months, dayElement),
+            challenges: this.getStageChallenges(months, dayElement),
+            careAdvice: this.getStageCareAdvice(months, dayElement, favorable)
+        };
+    }
+    
+    /**
+     * 獲取階段帶養特色
+     * @param {Array} months - 月齡範圍
+     * @param {string} dayElement - 日主五行
+     * @returns {Array} - 特色列表
+     */
+    getStageCharacteristics(months, dayElement) {
+        const startMonth = months[0];
+        let baseCharacteristics = [];
+        
+        if (startMonth <= 1) {
+            const options = [
+                ["睡眠時間長，一天16-18小時", "需要頻繁餵養，2-3小時一次", "對聲音敏感，容易被驚醒", "喜歡被包裹的安全感"],
+                ["新生兒反射明顯", "視力模糊但對光線敏感", "哭聲是主要溝通方式", "需要大量的肌膚接觸"]
+            ];
+            baseCharacteristics = options[Math.floor(Math.random() * options.length)];
+        } else if (startMonth <= 3) {
+            const options = [
+                ["開始有社交微笑", "頭部控制能力增強", "對人臉有興趣", "哭聲開始有不同含義"],
+                ["眼神開始追蹤物體", "開始發出咕咕聲", "手部動作更協調", "對音樂有反應"]
+            ];
+            baseCharacteristics = options[Math.floor(Math.random() * options.length)];
+        } else if (startMonth <= 5) {
+            const options = [
+                ["可以翻身", "開始抓握物品", "對鏡子感興趣", "笑聲更加豐富"],
+                ["頭部可以穩定抬起", "開始伸手抓取玩具", "對顏色鮮豔的物品感興趣", "開始有規律的睡眠模式"]
+            ];
+            baseCharacteristics = options[Math.floor(Math.random() * options.length)];
+        } else if (startMonth <= 7) {
+            const options = [
+                ["可以坐立", "開始添加副食品", "對陌生人有警戒", "喜歡敲打玩具"],
+                ["可以不靠支撐坐著", "開始用手指抓取小物品", "認得熟悉的人", "喜歡把東西放進嘴裡探索"]
+            ];
+            baseCharacteristics = options[Math.floor(Math.random() * options.length)];
+        } else if (startMonth <= 9) {
+            const options = [
+                ["開始爬行", "可以自己坐穩", "模仿大人動作", "對小物品感興趣"],
+                ["可以扶著站立", "開始理解簡單的詞彙", "喜歡玩躲貓貓遊戲", "開始有分離焦慮"]
+            ];
+            baseCharacteristics = options[Math.floor(Math.random() * options.length)];
+        } else {
+            const options = [
+                ["開始站立行走", "理解簡單指令", "喜歡探索環境", "開始說單字"],
+                ["可以獨立站立幾秒", "開始用手勢溝通", "喜歡模仿聲音", "對因果關係有初步理解"]
+            ];
+            baseCharacteristics = options[Math.floor(Math.random() * options.length)];
+        }
+        
+        // 根據五行特質調整
+        return this.adjustCharacteristicsByElement(baseCharacteristics, dayElement);
+    }
+    
+    /**
+     * 獲取階段挑戰
+     * @param {Array} months - 月齡範圍
+     * @param {string} dayElement - 日主五行
+     * @returns {Array} - 挑戰列表
+     */
+    getStageChallenges(months, dayElement) {
+        const startMonth = months[0];
+        let baseChallenges = [];
+        
+        if (startMonth <= 1) {
+            const options = [
+                ["日夜顛倒，睡眠週期混亂", "腸絞痛可能，傍晚哭鬧", "餵養困難，含乳不佳", "過度刺激敏感，容易哭鬧"],
+                ["體重增長不穩定", "黃疸問題可能持續", "溫度調節能力差", "對環境變化適應困難"]
+            ];
+            baseChallenges = options[Math.floor(Math.random() * options.length)];
+        } else if (startMonth <= 3) {
+            const options = [
+                ["睡眠模式不穩定", "開始有分離焦慮", "容易受驚嚇", "需要更多互動刺激"],
+                ["白天小睡時間不規律", "對聲音過度敏感", "餵奶時容易分心", "情緒變化快速"]
+            ];
+            baseChallenges = options[Math.floor(Math.random() * options.length)];
+        } else if (startMonth <= 5) {
+            const options = [
+                ["開始長牙不適，流口水增加", "翻身後睡眠困擾", "對環境要求提高", "注意力短暫，容易分心"],
+                ["手部協調能力發展中", "對新食物可能排斥", "睡眠時間開始減少", "需要更多感官刺激"]
+            ];
+            baseChallenges = options[Math.floor(Math.random() * options.length)];
+        } else if (startMonth <= 7) {
+            const options = [
+                ["副食品適應期，可能過敏", "坐立不穩易跌倒", "陌生人焦慮明顯", "探索慾望增強但能力有限"],
+                ["開始出現挑食行為", "爬行前的挫折感", "對玩具要求更高", "需要更多安全防護"]
+            ];
+            baseChallenges = options[Math.floor(Math.random() * options.length)];
+        } else if (startMonth <= 9) {
+            const options = [
+                ["爬行期安全隱患增加", "分離焦慮加劇", "睡眠退化可能出現", "挫折忍受力低"],
+                ["對小物品的危險探索", "模仿能力強但判斷力不足", "需要更多社交互動", "情緒表達更複雜"]
+            ];
+            baseChallenges = options[Math.floor(Math.random() * options.length)];
+        } else {
+            const options = [
+                ["學步期跌倒風險高", "語言表達不足引起挫折", "獨立性與依賴性矛盾", "探索慾強但判斷力不足"],
+                ["開始有自我意識但表達有限", "對規則的理解能力有限", "社交技能發展中", "情緒調節能力待發展"]
+            ];
+            baseChallenges = options[Math.floor(Math.random() * options.length)];
+        }
+        
+        // 根據五行特質調整
+        return this.adjustChallengesByElement(baseChallenges, dayElement);
+    }
+    
+    /**
+     * 獲取階段照護建議
+     * @param {Array} months - 月齡範圍
+     * @param {string} dayElement - 日主五行
+     * @param {Array} favorable - 有利五行
+     * @returns {Array} - 照護建議列表
+     */
+    getStageCareAdvice(months, dayElement, favorable) {
+        const startMonth = months[0];
+        let baseAdvice = [];
+        
+        if (startMonth <= 1) {
+            baseAdvice = ["建立規律作息", "提供安全包裹感", "溫柔的聲音安撫", "適當的肌膚接觸"];
+        } else if (startMonth <= 3) {
+            baseAdvice = ["增加互動遊戲", "提供視覺刺激", "建立睡前儀式", "回應寶寶的社交信號"];
+        } else if (startMonth <= 5) {
+            baseAdvice = ["提供安全的探索環境", "適當的感官刺激", "支持翻身練習", "建立固定的日常節奏"];
+        } else if (startMonth <= 7) {
+            baseAdvice = ["循序漸進添加副食品", "提供坐立支撐", "建立信任感", "豐富的語言輸入"];
+        } else if (startMonth <= 9) {
+            baseAdvice = ["確保爬行環境安全", "提供適當挑戰", "保持一致的照護者", "鼓勵探索但設定界限"];
+        } else {
+            baseAdvice = ["提供學步支持", "豐富語言環境", "平衡獨立與協助", "建立安全探索區域"];
+        }
+        
+        // 根據五行特質調整
+        return this.adjustAdviceByElement(baseAdvice, dayElement, favorable);
+    }
+    
+    /**
+     * 根據五行調整特色
+     */
+    adjustCharacteristicsByElement(characteristics, dayElement) {
+        const elementAdjustments = {
+            '木': ["成長發育較快，身高體重增長明顯", "對自然環境敏感，喜歡戶外活動", "好奇心強，喜歡探索新事物"],
+            '火': ["情緒表達豐富，笑聲爽朗", "活動力較強，精力充沛", "對光線和色彩敏感，喜歡明亮環境"],
+            '土': ["性情較為穩定，不易哭鬧", "適應力強，容易建立規律作息", "喜歡穩定的環境和熟悉的照護者"],
+            '金': ["作息規律性佳，容易養成習慣", "對秩序敏感，喜歡整潔環境", "反應敏銳，學習能力強"],
+            '水': ["直覺敏銳，對情緒變化敏感", "情感豐富，需要更多安撫", "睡眠較深，但容易受環境影響"]
+        };
+        
+        // 隨機選擇2-3個特質，增加個性化
+        const adjustments = elementAdjustments[dayElement];
+        const selectedAdjustments = adjustments.slice(0, Math.floor(Math.random() * 2) + 2);
+        
+        return [...characteristics, ...selectedAdjustments];
+    }
+    
+    /**
+     * 根據五行調整挑戰
+     */
+    adjustChallengesByElement(challenges, dayElement) {
+        const elementChallenges = {
+            '木': ["成長速度不一致可能帶來生長痛", "精力旺盛難以安靜", "對束縛感到不適"],
+            '火': ["情緒起伏較大，哭鬧激烈", "容易過度刺激影響睡眠", "對溫度變化敏感"],
+            '土': ["變化適應需要更長時間", "可能出現固執行為", "食慾不穩定傾向"],
+            '金': ["對環境變化非常敏感", "完美主義造成焦慮", "對噪音不耐受"],
+            '水': ["情緒感受深刻，需要更多安撫", "睡眠容易受干擾", "對照護者情緒敏感"]
+        };
+        
+        // 隨機選擇1-2個挑戰，增加個性化
+        const adjustments = elementChallenges[dayElement];
+        const selectedAdjustments = adjustments.slice(0, Math.floor(Math.random() * 2) + 1);
+        
+        return [...challenges, ...selectedAdjustments];
+    }
+    
+    /**
+     * 根據五行調整建議
+     */
+    adjustAdviceByElement(advice, dayElement, favorable) {
+        const elementAdvice = {
+            '木': ["提供充足的自然光線和綠色植物", "增加戶外活動時間", "使用天然材質的玩具", "鼓勵自由探索但設定安全界限"],
+            '火': ["保持環境溫暖但通風良好", "提供豐富的色彩和視覺刺激", "使用柔和的燈光避免過度刺激", "建立規律的活動和休息時間"],
+            '土': ["維持穩定的環境和作息時間", "給予充分的安全感和擁抱", "逐步引入新事物避免突然變化", "提供質地豐富的觸覺體驗"],
+            '金': ["保持環境整潔有序", "建立清晰的日常規律和儀式感", "使用柔軟的音樂和聲音", "提供精緻的感官體驗"],
+            '水': ["提供安靜舒適的環境", "注重情感連結和溫柔互動", "使用流動的音樂或白噪音", "保持適當的濕度和溫度"]
+        };
+        
+        // 根據有利五行調整建議強度
+        let selectedAdvice = elementAdvice[dayElement];
+        if (favorable && favorable.includes(dayElement)) {
+            // 如果是有利五行，選擇更多建議
+            selectedAdvice = selectedAdvice.slice(0, 3);
+        } else {
+            // 否則選擇基本建議
+            selectedAdvice = selectedAdvice.slice(0, 2);
+        }
+        
+        return [...advice, ...selectedAdvice];
+    }
+    
+    /**
+     * 生成月份指南 (保留原有功能)
      * @param {Object} bazi - 八字信息
      * @param {Object} elementAnalysis - 五行分析
      * @param {number} age - 年齡 (0-10)

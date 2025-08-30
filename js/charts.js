@@ -88,35 +88,21 @@ class BaziCharts {
     }
 
     /**
-     * 初始化成長階段圖表
+     * 初始化0-12月好帶指數曲線圖
      * @param {string} canvasId - Canvas元素ID
      * @param {Object} bazi - 八字信息
      * @param {Object} elementAnalysis - 五行分析
      */
     initGrowthChart(canvasId, bazi, elementAnalysis) {
         const ctx = document.getElementById(canvasId).getContext('2d');
-        const chartType = document.getElementById('chartType').value;
         
         // 清除現有圖表
         if (this.charts.growth) {
             this.charts.growth.destroy();
         }
         
-        // 根據選擇的圖表類型生成數據
-        let chartData;
-        switch (chartType) {
-            case 'elements':
-                chartData = this.generateElementsGrowthData(bazi, elementAnalysis);
-                break;
-            case 'stars':
-                chartData = this.generateStarsGrowthData(bazi, elementAnalysis);
-                break;
-            case 'phases':
-                chartData = this.generatePhasesGrowthData(bazi, elementAnalysis);
-                break;
-            default:
-                chartData = this.generateElementsGrowthData(bazi, elementAnalysis);
-        }
+        // 生成0-12月好帶指數數據
+        const chartData = this.generateCareabilityIndexData(bazi, elementAnalysis);
         
         // 創建圖表
         this.charts.growth = new Chart(ctx, {
@@ -126,20 +112,243 @@ class BaziCharts {
                 responsive: true,
                 maintainAspectRatio: false,
                 scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: '月齡',
+                            font: {
+                                size: 14,
+                                weight: 'bold'
+                            }
+                        }
+                    },
                     y: {
-                        beginAtZero: true
+                        beginAtZero: true,
+                        max: 10,
+                        min: 1,
+                        title: {
+                            display: true,
+                            text: '好帶指數 (1-10分)',
+                            font: {
+                                size: 14,
+                                weight: 'bold'
+                            }
+                        },
+                        ticks: {
+                            stepSize: 1
+                        }
                     }
                 },
                 plugins: {
                     legend: {
-                        position: 'bottom'
+                        position: 'top',
+                        labels: {
+                            font: {
+                                size: 12
+                            }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return `${context.dataset.label}: ${context.raw}分`;
+                            }
+                        }
+                    }
+                },
+                elements: {
+                    line: {
+                        tension: 0.4
+                    },
+                    point: {
+                        radius: 6,
+                        hoverRadius: 8
                     }
                 }
             }
         });
         
         // 更新圖表分析文字
-        this.updateChartAnalysis(chartType, elementAnalysis);
+        this.updateCareabilityAnalysis(elementAnalysis);
+    }
+    
+    /**
+     * 生成0-12月好帶指數數據
+     * @param {Object} bazi - 八字信息
+     * @param {Object} elementAnalysis - 五行分析
+     * @returns {Object} - 圖表數據
+     */
+    generateCareabilityIndexData(bazi, elementAnalysis) {
+        // 生成0-12月的月齡標籤
+        const labels = [];
+        for (let i = 0; i <= 12; i++) {
+            labels.push(`${i}M`);
+        }
+        
+        const dayElement = elementAnalysis.dayElement;
+        const dayElementStrength = elementAnalysis.dayElementStrength;
+        
+        // 根據八字特徵計算基礎好帶指數
+        let baseIndex = this.calculateBaseCareabilityIndex(dayElement, dayElementStrength);
+        
+        // 生成每月的好帶指數
+        const careabilityData = [];
+        
+        for (let month = 0; month <= 12; month++) {
+            let monthlyIndex = baseIndex;
+            
+            // 根據不同月齡的發展特點調整指數
+            if (month <= 2) {
+                // 0-2月：新生兒期，根據五行特質調整
+                monthlyIndex += this.getNewbornAdjustment(dayElement, month);
+            } else if (month <= 6) {
+                // 3-6月：嬰兒期，開始有更多互動
+                monthlyIndex += this.getInfantAdjustment(dayElement, month);
+            } else if (month <= 12) {
+                // 7-12月：學步期，活動力增加
+                monthlyIndex += this.getToddlerAdjustment(dayElement, month);
+            }
+            
+            // 確保指數在1-10範圍內
+            monthlyIndex = Math.max(1, Math.min(10, monthlyIndex));
+            careabilityData.push(Math.round(monthlyIndex * 10) / 10);
+        }
+        
+        return {
+            labels: labels,
+            datasets: [{
+                label: '好帶指數',
+                data: careabilityData,
+                borderColor: '#ff6b6b',
+                backgroundColor: 'rgba(255, 107, 107, 0.1)',
+                borderWidth: 3,
+                fill: true,
+                pointBackgroundColor: '#ff6b6b',
+                pointBorderColor: '#ffffff',
+                pointBorderWidth: 2
+            }]
+        };
+    }
+    
+    /**
+     * 計算基礎好帶指數
+     * @param {string} dayElement - 日主五行
+     * @param {string} strength - 五行強度
+     * @returns {number} - 基礎指數
+     */
+    calculateBaseCareabilityIndex(dayElement, strength) {
+        let baseIndex = 5; // 預設中等好帶
+        
+        // 根據五行特質調整基礎指數
+        switch (dayElement) {
+            case '木':
+                baseIndex = 6; // 木質寶寶相對好帶，但需要關注
+                break;
+            case '火':
+                baseIndex = 4; // 火質寶寶較為活躍，需要更多耐心
+                break;
+            case '土':
+                baseIndex = 7; // 土質寶寶較為穩定，相對好帶
+                break;
+            case '金':
+                baseIndex = 5; // 金質寶寶中等，需要規律
+                break;
+            case '水':
+                baseIndex = 6; // 水質寶寶適應性強，相對好帶
+                break;
+        }
+        
+        // 根據五行強度調整
+        if (strength === '強') {
+            baseIndex -= 1; // 五行強的寶寶個性較強，稍微難帶一些
+        } else if (strength === '弱') {
+            baseIndex += 0.5; // 五行弱的寶寶較為溫和
+        }
+        
+        return baseIndex;
+    }
+    
+    /**
+     * 新生兒期調整 (0-2月)
+     */
+    getNewbornAdjustment(dayElement, month) {
+        let adjustment = 0;
+        
+        switch (dayElement) {
+            case '木':
+                adjustment = month === 0 ? -1 : (month === 1 ? -0.5 : 0);
+                break;
+            case '火':
+                adjustment = month === 0 ? -1.5 : (month === 1 ? -1 : -0.5);
+                break;
+            case '土':
+                adjustment = month === 0 ? 0 : (month === 1 ? 0.5 : 1);
+                break;
+            case '金':
+                adjustment = month === 0 ? -0.5 : (month === 1 ? 0 : 0.5);
+                break;
+            case '水':
+                adjustment = month === 0 ? -0.5 : (month === 1 ? 0 : 0.5);
+                break;
+        }
+        
+        return adjustment;
+    }
+    
+    /**
+     * 嬰兒期調整 (3-6月)
+     */
+    getInfantAdjustment(dayElement, month) {
+        let adjustment = 0;
+        const monthInPhase = month - 2; // 0-4 (對應3-6月)
+        
+        switch (dayElement) {
+            case '木':
+                adjustment = monthInPhase * 0.3; // 逐漸變好帶
+                break;
+            case '火':
+                adjustment = monthInPhase === 1 ? -0.5 : (monthInPhase >= 2 ? 0 : -1);
+                break;
+            case '土':
+                adjustment = monthInPhase * 0.2; // 穩定上升
+                break;
+            case '金':
+                adjustment = monthInPhase >= 2 ? 0.5 : 0;
+                break;
+            case '水':
+                adjustment = monthInPhase * 0.25;
+                break;
+        }
+        
+        return adjustment;
+    }
+    
+    /**
+     * 學步期調整 (7-12月)
+     */
+    getToddlerAdjustment(dayElement, month) {
+        let adjustment = 0;
+        const monthInPhase = month - 6; // 1-6 (對應7-12月)
+        
+        switch (dayElement) {
+            case '木':
+                adjustment = monthInPhase <= 3 ? 0.5 : (monthInPhase >= 5 ? -0.5 : 0);
+                break;
+            case '火':
+                adjustment = monthInPhase >= 3 ? -1 : -0.5; // 活動力增加，較難帶
+                break;
+            case '土':
+                adjustment = monthInPhase <= 2 ? 0.5 : 0; // 前期穩定
+                break;
+            case '金':
+                adjustment = monthInPhase >= 4 ? -0.5 : 0; // 後期需要更多規律
+                break;
+            case '水':
+                adjustment = monthInPhase <= 4 ? 0.3 : 0;
+                break;
+        }
+        
+        return adjustment;
     }
 
     /**
@@ -404,85 +613,93 @@ class BaziCharts {
     }
 
     /**
-     * 更新圖表分析文字
-     * @param {string} chartType - 圖表類型
+     * 更新好帶指數分析文字
      * @param {Object} elementAnalysis - 五行分析
      */
-    updateChartAnalysis(chartType, elementAnalysis) {
+    updateCareabilityAnalysis(elementAnalysis) {
         const analysisElement = document.getElementById('chartAnalysis');
         const dayElement = elementAnalysis.dayElement;
+        const dayElementStrength = elementAnalysis.dayElementStrength;
         
-        let analysisText = '';
+        let analysisText = `此圖表展示了寶寶從0到12個月期間的好帶指數變化趨勢。作為${dayElement}性寶寶（${dayElementStrength}），`;
         
-        switch (chartType) {
-            case 'elements':
-                analysisText = `此圖表展示了寶寶從0到10歲期間五行能量的變化趨勢。作為${dayElement}性寶寶，`;
-                
-                switch (dayElement) {
-                    case '木':
-                        analysisText += '木的能量在幼年期較為活躍，隨著年齡增長會趨於穩定。建議在幼年期給予足夠的自由探索空間，隨著年齡增長，逐漸引導建立規則意識和自律能力。';
-                        break;
-                    case '火':
-                        analysisText += '火的能量在3-7歲階段較為活躍，情緒表達和創造力豐富。建議在這一階段多提供藝術和表演活動，同時幫助建立情緒管理能力。';
-                        break;
-                    case '土':
-                        analysisText += '土的能量隨年齡增長逐漸增強，穩定性和責任感增強。建議在幼年期建立安全感和規律性，隨著年齡增長，培養責任意識和踏實性格。';
-                        break;
-                    case '金':
-                        analysisText += '金的能量在7-10歲階段較為活躍，邏輯思維和判斷力增強。建議在這一階段培養條理性和分析能力，同時注意培養情感表達和靈活性。';
-                        break;
-                    case '水':
-                        analysisText += '水的能量在各階段相對穩定，思維活躍且適應性強。建議在各階段均衡發展認知能力和社交能力，同時培養專注力和執行力。';
-                        break;
-                }
+        // 根據五行特質提供分析
+        switch (dayElement) {
+            case '木':
+                analysisText += '整體來說相對好帶，但在新生兒期需要更多關注。木質寶寶天性好奇，隨著月齡增長會越來越活潑，建議：\n\n';
+                analysisText += '• 0-2月：提供安靜穩定的環境，避免過度刺激\n';
+                analysisText += '• 3-6月：開始增加視覺和聽覺刺激，滿足好奇心\n';
+                analysisText += '• 7-12月：提供安全的探索空間，但要注意安全防護';
                 break;
-                
-            case 'stars':
-                analysisText = `此圖表展示了寶寶從0到10歲期間各種星耀能量的變化趨勢。作為${dayElement}性寶寶，`;
-                
-                switch (dayElement) {
-                    case '木':
-                        analysisText += '文昌星和將星的能量較為突出，表示在學習能力和領導力方面有較好的發展潛力。建議重點培養這些方面的能力，同時也要關注其他方面的均衡發展。';
-                        break;
-                    case '火':
-                        analysisText += '桃花星和華蓋星的能量較為突出，表示在人際關係和創造力方面有較好的發展潛力。建議重點培養這些方面的能力，同時也要關注專注力和持久力的培養。';
-                        break;
-                    case '土':
-                        analysisText += '祿星的能量較為突出，表示在資源獲取和穩定性方面有較好的發展潛力。建議重點培養這些方面的能力，同時也要關注創造力和靈活性的培養。';
-                        break;
-                    case '金':
-                        analysisText += '祿星和將星的能量較為突出，表示在資源獲取和競爭力方面有較好的發展潛力。建議重點培養這些方面的能力，同時也要關注情感表達和創造力的培養。';
-                        break;
-                    case '水':
-                        analysisText += '文昌星和華蓋星的能量較為突出，表示在學習能力和創造力方面有較好的發展潛力。建議重點培養這些方面的能力，同時也要關注執行力和堅持力的培養。';
-                        break;
-                }
+            case '火':
+                analysisText += '相對較難帶，特別是在活動力增強的階段。火質寶寶情緒表達強烈，需要更多耐心，建議：\n\n';
+                analysisText += '• 0-2月：保持環境溫暖舒適，及時回應需求\n';
+                analysisText += '• 3-6月：建立規律作息，避免過度興奮\n';
+                analysisText += '• 7-12月：提供充足的活動時間，幫助消耗精力';
                 break;
-                
-            case 'phases':
-                analysisText = `此圖表展示了寶寶從0到10歲期間各個發展階段的變化趨勢。作為${dayElement}性寶寶，`;
-                
-                switch (dayElement) {
-                    case '木':
-                        analysisText += '身體發展和自我意識的發展較為突出。在0-3歲階段，身體發展迅速；在5-10歲階段，自我意識快速增強。建議在幼年期注重身體活動和探索，在學齡期培養獨立性和自信心。';
-                        break;
-                    case '火':
-                        analysisText += '情緒發展和社交發展較為突出。在2-5歲階段，情緒表達豐富；在3-7歲階段，社交能力快速發展。建議在這些階段提供豐富的社交機會和情緒表達渠道，同時幫助建立情緒管理能力。';
-                        break;
-                    case '土':
-                        analysisText += '身體發展和情緒發展較為突出。在0-3歲階段，身體發展穩定；在2-5歲階段，情緒穩定性增強。建議在幼年期建立規律生活和安全感，在學前期培養情緒穩定性和責任感。';
-                        break;
-                    case '金':
-                        analysisText += '認知發展和自我意識較為突出。在學齡期，這些能力快速發展。建議在學齡期提供豐富的學習機會和思考訓練，培養邏輯思維和獨立判斷能力。';
-                        break;
-                    case '水':
-                        analysisText += '認知發展和社交發展較為突出。在各個階段，思維活躍且適應性強。建議在各階段均衡發展認知能力和社交能力，培養思考深度和溝通技巧。';
-                        break;
-                }
+            case '土':
+                analysisText += '是最好帶的類型，性格穩定溫和。土質寶寶適應性強，作息規律，建議：\n\n';
+                analysisText += '• 0-2月：建立穩定的餵養和睡眠規律\n';
+                analysisText += '• 3-6月：逐步增加互動時間，培養社交能力\n';
+                analysisText += '• 7-12月：保持規律作息，適度增加新體驗';
+                break;
+            case '金':
+                analysisText += '中等好帶程度，需要規律和條理。金質寶寶喜歡秩序，對環境變化較敏感，建議：\n\n';
+                analysisText += '• 0-2月：保持環境整潔有序，避免突然變化\n';
+                analysisText += '• 3-6月：建立固定的日常程序\n';
+                analysisText += '• 7-12月：逐步引入新事物，但要循序漸進';
+                break;
+            case '水':
+                analysisText += '相對好帶，適應性強且聰明。水質寶寶思維活躍，學習能力強，建議：\n\n';
+                analysisText += '• 0-2月：提供豐富但不過度的感官刺激\n';
+                analysisText += '• 3-6月：增加互動遊戲，促進智力發展\n';
+                analysisText += '• 7-12月：提供多樣化的學習機會和探索環境';
                 break;
         }
         
-        analysisElement.textContent = analysisText;
+        // 根據五行強度調整建議
+        if (dayElementStrength === '強') {
+            analysisText += '\n\n由於五行較強，寶寶個性會比較明顯，建議家長要有更多耐心，並建立清楚的界限和規則。';
+        } else if (dayElementStrength === '弱') {
+            analysisText += '\n\n由於五行較弱，寶寶性格相對溫和，但可能需要更多鼓勵和支持來建立自信心。';
+        }
+        
+        analysisElement.innerHTML = analysisText.replace(/\n/g, '<br>');
+    }
+    
+    /**
+     * 下載圖表為PNG格式
+     * @param {string} chartId - 圖表ID
+     * @param {string} filename - 檔案名稱
+     */
+    downloadChartAsPNG(chartId, filename = '好帶指數圖表') {
+        const canvas = document.getElementById(chartId);
+        if (canvas) {
+            const link = document.createElement('a');
+            link.download = `${filename}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+    }
+    
+    /**
+     * 下載圖表為PDF格式
+     * @param {string} chartId - 圖表ID
+     * @param {string} filename - 檔案名稱
+     */
+    downloadChartAsPDF(chartId, filename = '好帶指數圖表') {
+        const canvas = document.getElementById(chartId);
+        if (canvas && window.jsPDF) {
+            const imgData = canvas.toDataURL('image/png');
+            const pdf = new window.jsPDF();
+            const imgWidth = 190;
+            const imgHeight = (canvas.height * imgWidth) / canvas.width;
+            
+            pdf.addImage(imgData, 'PNG', 10, 10, imgWidth, imgHeight);
+            pdf.save(`${filename}.pdf`);
+        } else {
+            alert('PDF功能需要載入jsPDF庫');
+        }
     }
 }
 
